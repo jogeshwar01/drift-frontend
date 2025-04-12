@@ -8,16 +8,23 @@ import {
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { clusterApiUrl } from "@solana/web3.js";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import { DriftProvider } from "@/components/drift/DriftProvider";
 import "@solana/wallet-adapter-react-ui/styles.css";
 
-export default function Providers({ children }: { readonly children: ReactNode }) {
+export default function Providers({
+  children,
+}: {
+  readonly children: ReactNode;
+}) {
   const network = WalletAdapterNetwork.Devnet;
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
   return (
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={[]} autoConnect>
-        <WalletModalProvider>{children}</WalletModalProvider>
+        <WalletModalProvider>
+          <DriftProvider>{children}</DriftProvider>
+        </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
   );
