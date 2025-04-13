@@ -1,47 +1,24 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useDriftStore } from "@/store/driftStore";
 
 export function UserAccountManager() {
   const driftClient = useDriftStore((state) => state.driftClient);
   const { publicKey, signTransaction } = useWallet();
-  const [userAccounts, setUserAccounts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [status, setStatus] = useState<string>("");
   const [subAccountId, setSubAccountId] = useState<number>(0);
   const [accountName, setAccountName] = useState<string>("");
 
-  const fetchUserAccounts = useCallback(async () => {
-    if (!publicKey || !driftClient) return;
-
-    try {
-      setIsLoading(true);
-      setStatus("Fetching user accounts...");
-
-      const accounts = await driftClient.getUserAccountsForAuthority(publicKey);
-      setUserAccounts(accounts);
-
-      if (accounts.length > 0) {
-        setStatus(`Found ${accounts.length} account(s)`);
-      } else {
-        setStatus("No accounts found. Please create one.");
-      }
-    } catch (error) {
-      console.error("Error fetching user accounts:", error);
-      setStatus(
-        `Error: ${error instanceof Error ? error.message : String(error)}`
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, [publicKey, driftClient]);
+  const fetchUserAccounts = useDriftStore((state) => state.fetchUserAccounts);
+  const userAccounts = useDriftStore((state) => state.userAccounts);
 
   // Fetch user accounts when wallet is connected
   useEffect(() => {
     if (publicKey && driftClient) {
-      fetchUserAccounts();
+      fetchUserAccounts(publicKey);
     }
   }, [publicKey, driftClient, fetchUserAccounts]);
 
@@ -55,9 +32,11 @@ export function UserAccountManager() {
     const existingAccount = userAccounts.find(
       (account) => account.subAccountId === subAccountId
     );
-    
+
     if (existingAccount) {
-      setStatus(`Error: Account with ID ${subAccountId} already exists. Please choose a different ID.`);
+      setStatus(
+        `Error: Account with ID ${subAccountId} already exists. Please choose a different ID.`
+      );
       return;
     }
 
@@ -93,7 +72,7 @@ export function UserAccountManager() {
       );
 
       // Refresh the accounts list
-      fetchUserAccounts();
+      fetchUserAccounts(publicKey);
     } catch (error) {
       console.error("Error initializing user account:", error);
       setStatus(
@@ -104,13 +83,19 @@ export function UserAccountManager() {
     }
   };
 
+  const handleRefreshAccounts = () => {
+    if (publicKey) {
+      fetchUserAccounts(publicKey);
+    }
+  };
+
   return (
     <div className="mt-8 p-4 border rounded-lg">
       <h2 className="text-xl font-semibold mb-4">User Account Management</h2>
 
       <div className="mb-4">
         <button
-          onClick={fetchUserAccounts}
+          onClick={handleRefreshAccounts}
           disabled={isLoading || !publicKey}
           className="bg-gray-500 text-white px-4 py-2 rounded disabled:bg-gray-300 mr-2"
         >

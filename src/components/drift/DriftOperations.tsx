@@ -3,6 +3,7 @@ import { useState } from "react";
 import { DepositForm } from "./DepositForm";
 import { WithdrawalForm } from "./WithdrawalForm";
 import { PerpOrderForm } from "./PerpOrderForm";
+import { WalletViewer } from "./WalletViewer";
 
 export const DriftOperations = () => {
   const [activeTab, setActiveTab] = useState<string>("deposit");
@@ -42,6 +43,16 @@ export const DriftOperations = () => {
             >
               Trade
             </button>
+            <button
+              onClick={() => setActiveTab("view")}
+              className={`mr-8 py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === "view"
+                  ? "border-blue-500 text-blue-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              View Wallet
+            </button>
           </nav>
         </div>
       </div>
@@ -50,6 +61,7 @@ export const DriftOperations = () => {
         {activeTab === "deposit" && <DepositForm />}
         {activeTab === "withdraw" && <WithdrawalForm />}
         {activeTab === "trade" && <PerpOrderForm />}
+        {activeTab === "view" && <WalletViewer />}
       </div>
     </div>
   );

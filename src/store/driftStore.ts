@@ -6,7 +6,7 @@ interface DriftStore {
   driftClient: DriftClient | null;
   setDriftClient: (client: DriftClient) => void;
   userAccounts: UserAccount[];
-  fetchUserAccounts: (publicKey: PublicKey | null) => Promise<UserAccount[]>;
+  fetchUserAccounts: (publicKey: PublicKey | null, setAccounts?: boolean) => Promise<UserAccount[]>;
   isLoading: boolean;
   error: string | null;
 }
@@ -17,7 +17,7 @@ export const useDriftStore = create<DriftStore>((set, get) => ({
   userAccounts: [],
   isLoading: false,
   error: null,
-  fetchUserAccounts: async (publicKey) => {
+  fetchUserAccounts: async (publicKey, setAccounts = true) => {
     const { driftClient } = get();
     if (!publicKey || !driftClient) {
       set({ error: "Wallet not connected or Drift client not initialized" });
@@ -27,7 +27,11 @@ export const useDriftStore = create<DriftStore>((set, get) => ({
     try {
       set({ isLoading: true, error: null });
       const accounts = await driftClient.getUserAccountsForAuthority(publicKey);
-      set({ userAccounts: accounts, isLoading: false });
+      if (setAccounts) {
+        set({ userAccounts: accounts, isLoading: false });
+      } else {
+        set({ isLoading: false });
+      }
       return accounts;
     } catch (error) {
       console.error("Error fetching user accounts:", error);
