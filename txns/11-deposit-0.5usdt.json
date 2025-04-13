@@ -1,0 +1,1555 @@
+[
+  {
+    "authority": "9H6vsbV2WcXPfhdwfPf1R1agrMd6yQca6VBcdAhuTfet",
+    "delegate": "11111111111111111111111111111111",
+    "name": [
+      77, 97, 105, 110, 32, 65, 99, 99, 111, 117, 110, 116, 32, 32, 32, 32, 32,
+      32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32
+    ],
+    "spotPositions": [
+      {
+        "scaledBalance": "33bdf620",
+        "openBids": "00",
+        "openAsks": "00",
+        "cumulativeDeposits": "0f4240",
+        "marketIndex": 0,
+        "balanceType": {
+          "deposit": {}
+        },
+        "openOrders": 0,
+        "padding": [0, 0, 0, 0]
+      },
+      {
+        "scaledBalance": "90da75",
+        "openBids": "00",
+        "openAsks": "00",
+        "cumulativeDeposits": "989680",
+        "marketIndex": 1,
+        "balanceType": {
+          "deposit": {}
+        },
+        "openOrders": 0,
+        "padding": [0, 0, 0, 0]
+      },
+      {
+        "scaledBalance": "1b3ab278",
+        "openBids": "00",
+        "openAsks": "00",
+        "cumulativeDeposits": "07a120",
+        "marketIndex": 5,
+        "balanceType": {
+          "deposit": {}
+        },
+        "openOrders": 0,
+        "padding": [0, 0, 0, 0]
+      },
+      {
+        "scaledBalance": "00",
+        "openBids": "00",
+        "openAsks": "00",
+        "cumulativeDeposits": "00",
+        "marketIndex": 0,
+        "balanceType": {
+          "deposit": {}
+        },
+        "openOrders": 0,
+        "padding": [0, 0, 0, 0]
+      },
+      {
+        "scaledBalance": "00",
+        "openBids": "00",
+        "openAsks": "00",
+        "cumulativeDeposits": "00",
+        "marketIndex": 0,
+        "balanceType": {
+          "deposit": {}
+        },
+        "openOrders": 0,
+        "padding": [0, 0, 0, 0]
+      },
+      {
+        "scaledBalance": "00",
+        "openBids": "00",
+        "openAsks": "00",
+        "cumulativeDeposits": "00",
+        "marketIndex": 0,
+        "balanceType": {
+          "deposit": {}
+        },
+        "openOrders": 0,
+        "padding": [0, 0, 0, 0]
+      },
+      {
+        "scaledBalance": "00",
+        "openBids": "00",
+        "openAsks": "00",
+        "cumulativeDeposits": "00",
+        "marketIndex": 0,
+        "balanceType": {
+          "deposit": {}
+        },
+        "openOrders": 0,
+        "padding": [0, 0, 0, 0]
+      },
+      {
+        "scaledBalance": "00",
+        "openBids": "00",
+        "openAsks": "00",
+        "cumulativeDeposits": "00",
+        "marketIndex": 0,
+        "balanceType": {
+          "deposit": {}
+        },
+        "openOrders": 0,
+        "padding": [0, 0, 0, 0]
+      }
+    ],
+    "perpPositions": [
+      {
+        "lastCumulativeFundingRate": "0bbe8e0426",
+        "baseAssetAmount": "989680",
+        "quoteAssetAmount": "-1396da",
+        "quoteBreakEvenAmount": "-1396da",
+        "quoteEntryAmount": "-139599",
+        "openBids": "01312d00",
+        "openAsks": "00",
+        "settledPnl": "-124a",
+        "lpShares": "00",
+        "lastBaseAssetAmountPerLp": "00",
+        "lastQuoteAssetAmountPerLp": "00",
+        "remainderBaseAssetAmount": 0,
+        "marketIndex": 0,
+        "openOrders": 3,
+        "perLpBase": 0
+      },
+      {
+        "lastCumulativeFundingRate": "00",
+        "baseAssetAmount": "00",
+        "quoteAssetAmount": "00",
+        "quoteBreakEvenAmount": "00",
+        "quoteEntryAmount": "00",
+        "openBids": "00",
+        "openAsks": "00",
+        "settledPnl": "00",
+        "lpShares": "00",
+        "lastBaseAssetAmountPerLp": "00",
+        "lastQuoteAssetAmountPerLp": "00",
+        "remainderBaseAssetAmount": 0,
+        "marketIndex": 0,
+        "openOrders": 0,
+        "perLpBase": 0
+      },
+      {
+        "lastCumulativeFundingRate": "00",
+        "baseAssetAmount": "00",
+        "quoteAssetAmount": "00",
+        "quoteBreakEvenAmount": "00",
+        "quoteEntryAmount": "00",
+        "openBids": "00",
+        "openAsks": "00",
+        "settledPnl": "00",
+        "lpShares": "00",
+        "lastBaseAssetAmountPerLp": "00",
+        "lastQuoteAssetAmountPerLp": "00",
+        "remainderBaseAssetAmount": 0,
+        "marketIndex": 0,
+        "openOrders": 0,
+        "perLpBase": 0
+      },
+      {
+        "lastCumulativeFundingRate": "00",
+        "baseAssetAmount": "00",
+        "quoteAssetAmount": "00",
+        "quoteBreakEvenAmount": "00",
+        "quoteEntryAmount": "00",
+        "openBids": "00",
+        "openAsks": "00",
+        "settledPnl": "00",
+        "lpShares": "00",
+        "lastBaseAssetAmountPerLp": "00",
+        "lastQuoteAssetAmountPerLp": "00",
+        "remainderBaseAssetAmount": 0,
+        "marketIndex": 0,
+        "openOrders": 0,
+        "perLpBase": 0
+      },
+      {
+        "lastCumulativeFundingRate": "00",
+        "baseAssetAmount": "00",
+        "quoteAssetAmount": "00",
+        "quoteBreakEvenAmount": "00",
+        "quoteEntryAmount": "00",
+        "openBids": "00",
+        "openAsks": "00",
+        "settledPnl": "00",
+        "lpShares": "00",
+        "lastBaseAssetAmountPerLp": "00",
+        "lastQuoteAssetAmountPerLp": "00",
+        "remainderBaseAssetAmount": 0,
+        "marketIndex": 0,
+        "openOrders": 0,
+        "perLpBase": 0
+      },
+      {
+        "lastCumulativeFundingRate": "00",
+        "baseAssetAmount": "00",
+        "quoteAssetAmount": "00",
+        "quoteBreakEvenAmount": "00",
+        "quoteEntryAmount": "00",
+        "openBids": "00",
+        "openAsks": "00",
+        "settledPnl": "00",
+        "lpShares": "00",
+        "lastBaseAssetAmountPerLp": "00",
+        "lastQuoteAssetAmountPerLp": "00",
+        "remainderBaseAssetAmount": 0,
+        "marketIndex": 0,
+        "openOrders": 0,
+        "perLpBase": 0
+      },
+      {
+        "lastCumulativeFundingRate": "00",
+        "baseAssetAmount": "00",
+        "quoteAssetAmount": "00",
+        "quoteBreakEvenAmount": "00",
+        "quoteEntryAmount": "00",
+        "openBids": "00",
+        "openAsks": "00",
+        "settledPnl": "00",
+        "lpShares": "00",
+        "lastBaseAssetAmountPerLp": "00",
+        "lastQuoteAssetAmountPerLp": "00",
+        "remainderBaseAssetAmount": 0,
+        "marketIndex": 0,
+        "openOrders": 0,
+        "perLpBase": 0
+      },
+      {
+        "lastCumulativeFundingRate": "00",
+        "baseAssetAmount": "00",
+        "quoteAssetAmount": "00",
+        "quoteBreakEvenAmount": "00",
+        "quoteEntryAmount": "00",
+        "openBids": "00",
+        "openAsks": "00",
+        "settledPnl": "00",
+        "lpShares": "00",
+        "lastBaseAssetAmountPerLp": "00",
+        "lastQuoteAssetAmountPerLp": "00",
+        "remainderBaseAssetAmount": 0,
+        "marketIndex": 0,
+        "openOrders": 0,
+        "perLpBase": 0
+      }
+    ],
+    "orders": [
+      {
+        "slot": "13dc58cc",
+        "price": "07829b80",
+        "baseAssetAmount": "989680",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 1,
+        "marketIndex": 0,
+        "status": {
+          "open": {}
+        },
+        "orderType": {
+          "limit": {}
+        },
+        "marketType": {
+          "perp": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 204,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "13dc646b",
+        "price": "00",
+        "baseAssetAmount": "989680",
+        "baseAssetAmountFilled": "989680",
+        "quoteAssetAmountFilled": "139599",
+        "triggerPrice": "00",
+        "auctionStartPrice": "-af64",
+        "auctionEndPrice": "4b64",
+        "maxTs": "67fbcb4d",
+        "oraclePriceOffset": 19348,
+        "orderId": 7,
+        "marketIndex": 0,
+        "status": {
+          "filled": {}
+        },
+        "orderType": {
+          "oracle": {}
+        },
+        "marketType": {
+          "perp": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 20,
+        "postedSlotTail": 118,
+        "bitFlags": 1,
+        "padding": [0]
+      },
+      {
+        "slot": "13dc5dbd",
+        "price": "00",
+        "baseAssetAmount": "989680",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "07270e00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 4,
+        "marketIndex": 0,
+        "status": {
+          "open": {}
+        },
+        "orderType": {
+          "triggerMarket": {}
+        },
+        "marketType": {
+          "perp": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "short": {}
+        },
+        "reduceOnly": true,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "below": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 189,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "13dc6209",
+        "price": "079c41e8",
+        "baseAssetAmount": "989680",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 5,
+        "marketIndex": 0,
+        "status": {
+          "open": {}
+        },
+        "orderType": {
+          "limit": {}
+        },
+        "marketType": {
+          "perp": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 9,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "13dc6209",
+        "price": "06eb2610",
+        "baseAssetAmount": "989680",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 6,
+        "marketIndex": 0,
+        "status": {
+          "canceled": {}
+        },
+        "orderType": {
+          "limit": {}
+        },
+        "marketType": {
+          "perp": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 9,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      },
+      {
+        "slot": "00",
+        "price": "00",
+        "baseAssetAmount": "00",
+        "baseAssetAmountFilled": "00",
+        "quoteAssetAmountFilled": "00",
+        "triggerPrice": "00",
+        "auctionStartPrice": "00",
+        "auctionEndPrice": "00",
+        "maxTs": "00",
+        "oraclePriceOffset": 0,
+        "orderId": 0,
+        "marketIndex": 0,
+        "status": {
+          "init": {}
+        },
+        "orderType": {
+          "market": {}
+        },
+        "marketType": {
+          "spot": {}
+        },
+        "userOrderId": 0,
+        "existingPositionDirection": {
+          "long": {}
+        },
+        "direction": {
+          "long": {}
+        },
+        "reduceOnly": false,
+        "postOnly": false,
+        "immediateOrCancel": false,
+        "triggerCondition": {
+          "above": {}
+        },
+        "auctionDuration": 0,
+        "postedSlotTail": 0,
+        "bitFlags": 0,
+        "padding": [0]
+      }
+    ],
+    "lastAddPerpLpSharesTs": "00",
+    "totalDeposits": "4140ef",
+    "totalWithdraws": "16e360",
+    "totalSocialLoss": "00",
+    "settledPerpPnl": "-124a",
+    "cumulativeSpotFees": "00",
+    "cumulativePerpFunding": "00",
+    "liquidationMarginFreed": "00",
+    "lastActiveSlot": "13dc6ddd",
+    "nextOrderId": 8,
+    "maxMarginRatio": 0,
+    "nextLiquidationId": 1,
+    "subAccountId": 0,
+    "status": 0,
+    "isMarginTradingEnabled": false,
+    "idle": false,
+    "openOrders": 3,
+    "hasOpenOrder": true,
+    "openAuctions": 0,
+    "hasOpenAuction": false,
+    "marginMode": {
+      "default": {}
+    },
+    "poolId": 0,
+    "padding1": [0, 0, 0],
+    "lastFuelBonusUpdateTs": 1744555198,
+    "padding": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  }
+]
