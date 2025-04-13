@@ -1,15 +1,13 @@
-import { Connection, PublicKey } from "@solana/web3.js";
-import { DriftClient, IWallet } from "@drift-labs/sdk";
+import { Connection, PublicKey, Transaction } from "@solana/web3.js";
+import { DriftClient, DriftEnv, IWallet } from "@drift-labs/sdk";
+import { config } from "../config";
 
 export async function getDriftClient(
   setDriftClient: (client: DriftClient) => void,
   publicKey: PublicKey | null
 ) {
   try {
-    const connection = new Connection(
-      "https://api.devnet.solana.com",
-      "confirmed"
-    );
+    const connection = new Connection(config.RPC_URL!, "confirmed");
 
     if (!publicKey) {
       console.log("No public key found");
@@ -23,20 +21,22 @@ export async function getDriftClient(
 
     // const wallet = new Wallet(keyPair);
 
-    const iWallet: IWallet = {
+    const wallet: IWallet = {
       publicKey: publicKey,
-        signTransaction: async (tx: any) => {
-          return tx;
-        },
-        signAllTransactions: async (txs: any) => {
-          return txs;
-        },
-      };
+      signTransaction: async (tx: Transaction) => {
+        // The transaction will be signed by the user's wallet in the frontend components
+        return tx;
+      },
+      signAllTransactions: async (txs: Transaction[]) => {
+        // The transactions will be signed by the user's wallet in the frontend components
+        return txs;
+      },
+    };
 
     const driftClient = new DriftClient({
       connection,
-      wallet: iWallet,
-      env: "devnet",
+      wallet,
+      env: config.NETWORK as DriftEnv,
     });
 
     // const driftClient = new DriftClient({
@@ -52,8 +52,7 @@ export async function getDriftClient(
     return {
       success: true,
       clientData: {
-        env: "devnet",
-        connectionEndpoint: "https://api.devnet.solana.com",
+        env: config.NETWORK!,
         client: driftClient,
       },
     };
@@ -76,5 +75,5 @@ export async function getDriftClient(
 // const driftClient = new DriftClient({
 //   connection,
 //   wallet: iWallet,
-//   env: "devnet",
+//   env: config.NETWORK!,
 // });
