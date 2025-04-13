@@ -3,7 +3,7 @@ import { useDriftStore } from "@/store/driftStore";
 import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 
-export const DepositForm = () => {
+export const WithdrawalForm = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
   const { publicKey, signTransaction } = useWallet();
   const fetchUserAccounts = useDriftStore((state) => state.fetchUserAccounts);
@@ -12,7 +12,7 @@ export const DepositForm = () => {
 
   const [amount, setAmount] = useState<string>("0.5");
   const [marketIndex, setMarketIndex] = useState<number>(1); // SOL
-  const [depositStatus, setDepositStatus] = useState<string>("");
+  const [withdrawalStatus, setWithdrawalStatus] = useState<string>("");
   const [selectedSubAccountId, setSelectedSubAccountId] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
@@ -22,23 +22,23 @@ export const DepositForm = () => {
     }
   }, [publicKey, fetchUserAccounts]);
 
-  const handleDeposit = async () => {
+  const handleWithdraw = async () => {
     if (!driftClient || !publicKey || !signTransaction) {
-      setDepositStatus("Please connect your wallet first");
+      setWithdrawalStatus("Please connect your wallet first");
       return;
     }
 
     if (userAccounts.length === 0) {
-      setDepositStatus("You need to create an account first");
+      setWithdrawalStatus("You need to create an account first");
       return;
     }
 
     try {
       setIsProcessing(true);
-      setDepositStatus("Preparing deposit transaction...");
+      setWithdrawalStatus("Preparing withdrawal transaction...");
 
       // Convert amount to the correct precision
-      const depositAmount = driftClient.convertToSpotPrecision(
+      const withdrawalAmount = driftClient.convertToSpotPrecision(
         marketIndex,
         parseFloat(amount)
       );
@@ -47,13 +47,17 @@ export const DepositForm = () => {
       const associatedTokenAccount =
         await driftClient.getAssociatedTokenAccount(marketIndex);
 
-      // Create the deposit transaction
-      const tx = await driftClient.createDepositTxn(
-        depositAmount,
+      // Get withdrawal instructions
+      const withdrawalIxs = await driftClient.getWithdrawalIxs(
+        withdrawalAmount,
         marketIndex,
         associatedTokenAccount,
+        false, // reduceOnly
         selectedSubAccountId // Use the selected sub account ID
       );
+
+      // Build transaction from instructions
+      const tx = await driftClient.buildTransaction(withdrawalIxs);
 
       // Sign the transaction with the user's wallet
       const signedTx = await signTransaction(tx);
@@ -65,13 +69,15 @@ export const DepositForm = () => {
         driftClient.opts
       );
 
-      setDepositStatus(`Deposit successful! Transaction signature: ${txSig}`);
+      setWithdrawalStatus(
+        `Withdrawal successful! Transaction signature: ${txSig}`
+      );
 
       // Refresh accounts to update balances
       fetchUserAccounts(publicKey);
     } catch (error) {
-      console.error("Error during deposit:", error);
-      setDepositStatus(
+      console.error("Error during withdrawal:", error);
+      setWithdrawalStatus(
         `Error: ${error instanceof Error ? error.message : String(error)}`
       );
     } finally {
@@ -81,12 +87,12 @@ export const DepositForm = () => {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-4">Deposit Funds</h2>
+      <h2 className="text-xl font-semibold mb-4">Withdraw Funds</h2>
 
       {userAccounts.length === 0 ? (
         <div className="mb-4">
           <p className="text-red-500">
-            You need to create a user account first before making deposits.
+            You need to create a user account first before making withdrawals.
           </p>
           <button
             onClick={() => fetchUserAccounts(publicKey)}
@@ -140,16 +146,16 @@ export const DepositForm = () => {
           </div>
 
           <button
-            onClick={handleDeposit}
+            onClick={handleWithdraw}
             disabled={isLoading || isProcessing || !publicKey}
             className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-300"
           >
-            {isProcessing ? "Processing..." : "Deposit"}
+            {isProcessing ? "Processing..." : "Withdraw"}
           </button>
         </>
       )}
 
-      {depositStatus && <p className="mt-4 text-sm">{depositStatus}</p>}
+      {withdrawalStatus && <p className="mt-4 text-sm">{withdrawalStatus}</p>}
     </div>
   );
 };

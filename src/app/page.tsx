@@ -1,8 +1,8 @@
 "use client";
 import { WalletMultiButtonDynamic } from "@/components/wallet/WalletButton";
 import { useDriftStore } from "@/store/driftStore";
-import { DepositForm } from "@/components/drift/DepositForm";
 import { UserAccountManager } from "@/components/drift/UserAccountManager";
+import { DriftOperations } from "@/components/drift/DriftOperations";
 
 export default function Home() {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -14,7 +14,7 @@ export default function Home() {
       <p className="mt-4">Drift Client: {driftClient?.authority.toBase58()}</p>
 
       <UserAccountManager />
-      <DepositForm />
+      <DriftOperations />
     </div>
   );
 }
