@@ -1,9 +1,11 @@
 "use client";
 
 import { DRIFT_ICON_URL } from "@/config/constants";
-import { UserAccount, SpotMarkets, BN } from "@drift-labs/sdk";
+import { UserAccount, SpotMarkets, BN, PublicKey } from "@drift-labs/sdk";
 import Image from "next/image";
+import Link from "next/link";
 import { config } from "@/config/env";
+import { ExternalLinkIcon } from "lucide-react";
 
 // Helper function to convert hex string to decimal
 const hexToDecimal = (hex: string): string => {
@@ -46,6 +48,7 @@ interface MarketData {
   formattedBalance: string;
   balanceType: string;
   hasBalance: boolean;
+  mint: PublicKey;
 }
 
 export const AccountInfoDisplay = ({ account }: AccountInfoDisplayProps) => {
@@ -87,6 +90,7 @@ export const AccountInfoDisplay = ({ account }: AccountInfoDisplayProps) => {
       formattedBalance,
       balanceType,
       hasBalance,
+      mint: spotConfig.mint,
     };
 
     if (hasBalance) {
@@ -130,19 +134,20 @@ export const AccountInfoDisplay = ({ account }: AccountInfoDisplayProps) => {
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               <table className="w-full">
-                <thead className="sticky top-0 bg-gray-900">
+                <thead className="sticky top-0">
                   <tr className="border-b border-gray-700">
                     <th className="py-2 px-4 text-left text-gray-300">Token</th>
+                    <th className="py-2 px-4 text-left text-gray-300">Mint</th>
                     <th className="py-2 px-4 text-left text-gray-300">
                       Balance
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedMarkets.map((market) => (
+                  {sortedMarkets.map((market, index) => (
                     <tr
                       key={`market-${market.marketIndex}`}
-                      className="border-b border-gray-700"
+                      className="border-b border-gray-700 odd:bg-gray-900/50"
                     >
                       <td className="py-2 px-4">
                         <div className="flex items-center space-x-2">
@@ -162,6 +167,19 @@ export const AccountInfoDisplay = ({ account }: AccountInfoDisplayProps) => {
                             {market.symbol.toUpperCase()}
                           </span>
                         </div>
+                      </td>
+                      <td className="py-2 px-4">
+                        <Link
+                          href={`https://explorer.solana.com/address/${market.mint.toString()}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-400 hover:text-blue-300 flex items-center"
+                        >
+                          <span className="truncate max-w-[120px]">
+                            {market.mint.toString().substring(0, 8)}...
+                          </span>
+                          <ExternalLinkIcon className="w-4 h-4 ml-1" />
+                        </Link>
                       </td>
                       <td className="py-2 px-4 text-gray-300">
                         {market.formattedBalance}

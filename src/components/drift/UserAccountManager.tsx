@@ -65,11 +65,10 @@ export function UserAccountManager() {
       setStatus("Initializing user account...");
 
       // Get the initialization instructions
-      const [initializeIxs] =
-        await driftClient.getInitializeUserAccountIxs(
-          subAccountId,
-          accountName || undefined
-        );
+      const [initializeIxs] = await driftClient.getInitializeUserAccountIxs(
+        subAccountId,
+        accountName || undefined
+      );
 
       // Build the transaction
       const tx = await driftClient.buildTransaction(initializeIxs);
@@ -97,9 +96,7 @@ export function UserAccountManager() {
       setShowCreateModal(false);
     } catch (error) {
       console.error("Error initializing user account:", error);
-      setStatus(
-        `${error instanceof Error ? error.message : String(error)}`
-      );
+      setStatus(`${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setIsLoading(false);
       setIsLoadingAccounts(false);
@@ -125,7 +122,7 @@ export function UserAccountManager() {
     <div className="mt-8 p-4 border border-gray-700 rounded-lg bg-gray-800 shadow">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold text-white">
-          User Account Management
+          Account
         </h2>
         <div className="flex space-x-4">
           <button
