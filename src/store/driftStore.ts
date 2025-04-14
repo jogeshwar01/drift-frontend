@@ -6,7 +6,10 @@ interface DriftStore {
   driftClient: DriftClient | null;
   setDriftClient: (client: DriftClient) => void;
   userAccounts: UserAccount[];
-  fetchUserAccounts: (publicKey: PublicKey | null, setAccounts?: boolean) => Promise<UserAccount[]>;
+  fetchUserAccounts: (
+    publicKey: PublicKey | null,
+    setAccounts?: boolean
+  ) => Promise<UserAccount[]>;
   isLoading: boolean;
   error: string | null;
 }

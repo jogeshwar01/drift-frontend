@@ -2,7 +2,11 @@
 import { useDriftStore } from "@/store/driftStore";
 import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { OptionalOrderParams, OrderType, PositionDirection } from "@drift-labs/sdk";
+import {
+  OptionalOrderParams,
+  OrderType,
+  PositionDirection,
+} from "@drift-labs/sdk";
 import {
   MARKET_ICONS,
   MARKET_SYMBOLS,
@@ -22,6 +26,8 @@ import {
   SuccessIcon,
   ErrorIcon,
 } from "@/components/icons";
+import { DriftPriceChart } from "./DriftPriceChart";
+import Image from "next/image";
 
 export const PerpOrderForm = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -146,27 +152,39 @@ export const PerpOrderForm = () => {
           </button>
         </div>
       ) : (
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Select Account
-            </label>
-            <select
-              value={selectedSubAccountId}
-              onChange={(e) => setSelectedSubAccountId(Number(e.target.value))}
-              className="w-full bg-gray-700 text-white rounded-lg p-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors appearance-none"
-            >
-              {userAccounts.map((account) => (
-                <option key={account.subAccountId} value={account.subAccountId}>
-                  {account.name
-                    ? new TextDecoder().decode(new Uint8Array(account.name))
-                    : `Account ${account.subAccountId}`}
-                </option>
-              ))}
-            </select>
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="w-full md:w-3/5 transition-all duration-300 ease-in-out">
+            <DriftPriceChart
+              marketSymbol={" SOL"}
+              marketMint={"So11111111111111111111111111111111111111112"}
+            />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="w-full md:w-2/5 space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Select Account
+              </label>
+              <select
+                value={selectedSubAccountId}
+                onChange={(e) =>
+                  setSelectedSubAccountId(Number(e.target.value))
+                }
+                className="w-full bg-gray-700 text-white rounded-lg p-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors appearance-none"
+              >
+                {userAccounts.map((account) => (
+                  <option
+                    key={account.subAccountId}
+                    value={account.subAccountId}
+                  >
+                    {account.name
+                      ? new TextDecoder().decode(new Uint8Array(account.name))
+                      : `Account ${account.subAccountId}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Order Type
@@ -222,120 +240,124 @@ export const PerpOrderForm = () => {
                 </button>
               </div>
             </div>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Market
-            </label>
-            <div className="relative">
-              <select
-                value={marketIndex}
-                onChange={(e) => setMarketIndex(Number(e.target.value))}
-                className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors appearance-none"
-              >
-                {Object.entries(MARKET_NAMES).map(([index, name]) => (
-                  <option key={index} value={index}>
-                    {name}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <img
-                  src={
-                    MARKET_ICONS[
-                      getMarketSymbol(marketIndex) as keyof typeof MARKET_ICONS
-                    ] || PLACEHOLDER_ICON
-                  }
-                  alt={getMarketSymbol(marketIndex)}
-                  className="w-5 h-5"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = PLACEHOLDER_ICON;
-                  }}
-                />
-              </div>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <ChevronDownIcon className="w-5 h-5 text-gray-400" />
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Size
-            </label>
-            <div className="relative">
-              <input
-                type="number"
-                value={baseAssetAmount}
-                onChange={(e) => setBaseAssetAmount(e.target.value)}
-                className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                min="0"
-                step="0.1"
-              />
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <ChartIcon className="w-5 h-5 text-gray-400" />
-              </div>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <span className="text-gray-400">
-                  {getMarketSymbol(marketIndex)}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {orderType === OrderType.LIMIT && (
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                Price
+                Market
+              </label>
+              <div className="relative">
+                <select
+                  value={marketIndex}
+                  onChange={(e) => setMarketIndex(Number(e.target.value))}
+                  className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors appearance-none"
+                >
+                  {Object.entries(MARKET_NAMES).map(([index, name]) => (
+                    <option key={index} value={index}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <Image
+                    src={
+                      MARKET_ICONS[
+                        getMarketSymbol(
+                          marketIndex
+                        ) as keyof typeof MARKET_ICONS
+                      ] || PLACEHOLDER_ICON
+                    }
+                    alt={getMarketSymbol(marketIndex)}
+                    className="w-5 h-5"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = PLACEHOLDER_ICON;
+                    }}
+                    width={20}
+                    height={20}
+                  />
+                </div>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <ChevronDownIcon className="w-5 h-5 text-gray-400" />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Size
               </label>
               <div className="relative">
                 <input
                   type="number"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                  value={baseAssetAmount}
+                  onChange={(e) => setBaseAssetAmount(e.target.value)}
                   className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                   min="0"
                   step="0.1"
                 />
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <CurrencyIcon className="w-5 h-5 text-gray-400" />
+                  <ChartIcon className="w-5 h-5 text-gray-400" />
                 </div>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <span className="text-gray-400">USD</span>
+                  <span className="text-gray-400">
+                    {getMarketSymbol(marketIndex)}
+                  </span>
                 </div>
               </div>
             </div>
-          )}
 
-          <button
-            onClick={handlePlaceOrder}
-            disabled={isProcessing || !publicKey}
-            className={`w-full py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center ${
-              direction === PositionDirection.LONG
-                ? "bg-green-600 hover:bg-green-700 disabled:bg-gray-600"
-                : "bg-red-600 hover:bg-red-700 disabled:bg-gray-600"
-            } text-white disabled:cursor-not-allowed`}
-          >
-            {isProcessing ? (
-              <>
-                <LoadingIcon className="-ml-1 mr-2 h-5 w-5 text-white" />
-                Processing...
-              </>
-            ) : (
-              <>
-                {direction === PositionDirection.LONG ? (
-                  <LongIcon className="w-5 h-5 mr-2" />
-                ) : (
-                  <ShortIcon className="w-5 h-5 mr-2" />
-                )}
-                {direction === PositionDirection.LONG
-                  ? "Buy / Long"
-                  : "Sell / Short"}{" "}
-                {MARKET_NAMES[marketIndex as keyof typeof MARKET_NAMES]}
-              </>
+            {orderType === OrderType.LIMIT && (
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Price
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                    min="0"
+                    step="0.1"
+                  />
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <CurrencyIcon className="w-5 h-5 text-gray-400" />
+                  </div>
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <span className="text-gray-400">USD</span>
+                  </div>
+                </div>
+              </div>
             )}
-          </button>
+
+            <button
+              onClick={handlePlaceOrder}
+              disabled={isProcessing || !publicKey}
+              className={`w-full py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center ${
+                direction === PositionDirection.LONG
+                  ? "bg-green-600 hover:bg-green-700 disabled:bg-gray-600"
+                  : "bg-red-600 hover:bg-red-700 disabled:bg-gray-600"
+              } text-white disabled:cursor-not-allowed`}
+            >
+              {isProcessing ? (
+                <>
+                  <LoadingIcon className="-ml-1 mr-2 h-5 w-5 text-white" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  {direction === PositionDirection.LONG ? (
+                    <LongIcon className="w-5 h-5 mr-2" />
+                  ) : (
+                    <ShortIcon className="w-5 h-5 mr-2" />
+                  )}
+                  {direction === PositionDirection.LONG
+                    ? "Buy / Long"
+                    : "Sell / Short"}{" "}
+                  {MARKET_NAMES[marketIndex as keyof typeof MARKET_NAMES]}
+                </>
+              )}
+            </button>
+          </div>
         </div>
       )}
 
