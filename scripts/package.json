@@ -1,0 +1,17 @@
+{
+  "name": "test",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@drift-labs/sdk": "^2.118.0-beta.7",
+    "@solana/web3.js": "^1.98.0"
+  }
+}
