@@ -189,7 +189,7 @@ export function UserAccountManager() {
       )}
 
       {!isLoadingAccounts && userAccounts.length === 0 && (
-        <div className="text-center py-8 h-[60vh]">
+        <div className="text-center py-8 h-[60vh] flex justify-center items-center">
           <p className="text-gray-300">
             No accounts found. Create a new account to get started.
           </p>
