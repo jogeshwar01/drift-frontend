@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { PublicKey } from "@solana/web3.js";
 import { UserAccount } from "@drift-labs/sdk";
 import { AccountInfoDisplay } from "./AccountInfoDisplay";
+import { LoadingSpinner } from "../common/LoadingSpinner";
 
 export const WalletViewer = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -15,6 +16,7 @@ export const WalletViewer = () => {
   const [viewStatus, setViewStatus] = useState<string>("");
   const [viewedAccounts, setViewedAccounts] = useState<UserAccount[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<number | null>(null);
+  const [isLoadingAccounts, setIsLoadingAccounts] = useState<boolean>(false);
 
   // Set first account as default when accounts are loaded
   useEffect(() => {
@@ -35,6 +37,7 @@ export const WalletViewer = () => {
     }
 
     try {
+      setIsLoadingAccounts(true);
       setViewStatus("Fetching accounts for wallet...");
 
       // Validate the wallet address
@@ -63,6 +66,8 @@ export const WalletViewer = () => {
       setViewStatus(
         `Error: ${error instanceof Error ? error.message : String(error)}`
       );
+    } finally {
+      setIsLoadingAccounts(false);
     }
   };
 
@@ -87,15 +92,19 @@ export const WalletViewer = () => {
             />
             <button
               onClick={handleViewWallet}
-              disabled={isLoading || !driftClient}
+              disabled={isLoading || !driftClient || isLoadingAccounts}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded disabled:bg-gray-700 cursor-pointer transition-colors duration-200"
             >
-              {isLoading ? "Loading..." : "View Wallet"}
+              {isLoadingAccounts ? "Loading..." : "View Wallet"}
             </button>
           </div>
         </div>
 
-        {viewedAccounts.length > 0 ? (
+        {isLoadingAccounts ? (
+          <div className="flex justify-center py-8">
+            <LoadingSpinner text="Loading wallet data..." />
+          </div>
+        ) : viewedAccounts.length > 0 ? (
           <div className="space-y-6">
             <div>
               <label className="block mb-2 text-gray-300">
@@ -120,9 +129,7 @@ export const WalletViewer = () => {
             </div>
 
             {selectedAccountData && (
-              <AccountInfoDisplay
-                account={selectedAccountData}
-              />
+              <AccountInfoDisplay account={selectedAccountData} />
             )}
           </div>
         ) : (
@@ -133,7 +140,9 @@ export const WalletViewer = () => {
           </div>
         )}
 
-        {viewStatus && <p className="text-sm text-gray-300 wrap-break-word">{viewStatus}</p>}
+        {viewStatus && (
+          <p className="text-sm text-gray-300 wrap-break-word">{viewStatus}</p>
+        )}
         {error && <p className="text-sm text-red-400">{error}</p>}
       </div>
     </div>

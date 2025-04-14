@@ -3,23 +3,27 @@ import { useDriftStore } from "@/store/driftStore";
 import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { RefreshIcon } from "../icons";
+import { LoadingSpinner } from "../common/LoadingSpinner";
 
 export const WithdrawalForm = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
   const { publicKey, signTransaction } = useWallet();
   const fetchUserAccounts = useDriftStore((state) => state.fetchUserAccounts);
   const userAccounts = useDriftStore((state) => state.userAccounts);
-  const isLoading = useDriftStore((state) => state.isLoading);
 
   const [amount, setAmount] = useState<string>("0.5");
   const [marketIndex, setMarketIndex] = useState<number>(1); // SOL
   const [withdrawalStatus, setWithdrawalStatus] = useState<string>("");
   const [selectedSubAccountId, setSelectedSubAccountId] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [isLoadingAccounts, setIsLoadingAccounts] = useState<boolean>(false);
 
   useEffect(() => {
     if (publicKey) {
-      fetchUserAccounts(publicKey);
+      setIsLoadingAccounts(true);
+      fetchUserAccounts(publicKey).finally(() => {
+        setIsLoadingAccounts(false);
+      });
     }
   }, [publicKey, fetchUserAccounts]);
 
@@ -82,7 +86,8 @@ export const WithdrawalForm = () => {
       );
 
       // Refresh accounts to update balances
-      fetchUserAccounts(publicKey);
+      setIsLoadingAccounts(true);
+      await fetchUserAccounts(publicKey);
     } catch (error) {
       console.error("Error during withdrawal:", error);
       setWithdrawalStatus(
@@ -90,6 +95,18 @@ export const WithdrawalForm = () => {
       );
     } finally {
       setIsProcessing(false);
+      setIsLoadingAccounts(false);
+    }
+  };
+
+  const handleRefreshAccounts = async () => {
+    if (publicKey) {
+      setIsLoadingAccounts(true);
+      try {
+        await fetchUserAccounts(publicKey);
+      } finally {
+        setIsLoadingAccounts(false);
+      }
     }
   };
 
@@ -97,14 +114,18 @@ export const WithdrawalForm = () => {
     <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
       <h2 className="text-xl font-semibold text-white mb-6">Withdraw Funds</h2>
 
-      {userAccounts.length === 0 ? (
+      {isLoadingAccounts ? (
+        <div className="flex justify-center py-8">
+          <LoadingSpinner text="Loading accounts..." />
+        </div>
+      ) : userAccounts.length === 0 ? (
         <div className="mb-4 p-4 bg-red-900/30 border border-red-700 rounded-lg">
           <p className="text-red-400">
             You need to create a user account first before making withdrawals.
           </p>
           <button
-            onClick={() => fetchUserAccounts(publicKey)}
-            disabled={isLoading || !publicKey}
+            onClick={handleRefreshAccounts}
+            disabled={isLoadingAccounts || !publicKey}
             className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg mt-3 transition-colors duration-200 flex items-center"
           >
             <RefreshIcon className="w-4 h-4 mr-2" />
@@ -169,7 +190,7 @@ export const WithdrawalForm = () => {
 
           <button
             onClick={handleWithdraw}
-            disabled={isProcessing || !publicKey}
+            disabled={isProcessing || !publicKey || isLoadingAccounts}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition-colors duration-200 disabled:bg-gray-600 disabled:cursor-not-allowed"
           >
             {isProcessing ? "Processing..." : "Withdraw"}

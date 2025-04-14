@@ -5,16 +5,17 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useDriftStore } from "@/store/driftStore";
 import { RefreshIcon } from "../icons";
 import { AccountInfoDisplay } from "./AccountInfoDisplay";
+import { LoadingSpinner } from "../common/LoadingSpinner";
 
 export function UserAccountManager() {
   const driftClient = useDriftStore((state) => state.driftClient);
   const { publicKey, signTransaction } = useWallet();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [status, setStatus] = useState<string>("");
-  const [subAccountId, setSubAccountId] = useState<number>(0);
   const [accountName, setAccountName] = useState<string>("");
   const [selectedAccount, setSelectedAccount] = useState<number | null>(null);
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
+  const [isLoadingAccounts, setIsLoadingAccounts] = useState<boolean>(false);
 
   const fetchUserAccounts = useDriftStore((state) => state.fetchUserAccounts);
   const userAccounts = useDriftStore((state) => state.userAccounts);
@@ -22,7 +23,10 @@ export function UserAccountManager() {
   // Fetch user accounts when wallet is connected and set first account as default
   useEffect(() => {
     if (publicKey && driftClient) {
-      fetchUserAccounts(publicKey);
+      setIsLoadingAccounts(true);
+      fetchUserAccounts(publicKey).finally(() => {
+        setIsLoadingAccounts(false);
+      });
     }
   }, [publicKey, driftClient, fetchUserAccounts]);
 
@@ -39,16 +43,21 @@ export function UserAccountManager() {
       return;
     }
 
-    // Check if the subAccountId already exists
-    const existingAccount = userAccounts.find(
-      (account) => account.subAccountId === subAccountId
-    );
-
-    if (existingAccount) {
-      setStatus(
-        `Error: Account with ID ${subAccountId} already exists. Please choose a different ID.`
-      );
+    if (!accountName.trim()) {
+      setStatus("Please enter an account name");
       return;
+    }
+
+    // Maximum of 8 sub-accounts allowed
+    if (userAccounts.length >= 8) {
+      setStatus("Maximum number of accounts (8) reached.");
+      return;
+    }
+    let subAccountId = 0;
+    try {
+      subAccountId = await driftClient.getNextSubAccountId();
+    } catch (error) {
+      console.log("Error getting next subaccount id", error);
     }
 
     try {
@@ -56,7 +65,7 @@ export function UserAccountManager() {
       setStatus("Initializing user account...");
 
       // Get the initialization instructions
-      const [initializeIxs, userAccountPublicKey] =
+      const [initializeIxs] =
         await driftClient.getInitializeUserAccountIxs(
           subAccountId,
           accountName || undefined
@@ -83,15 +92,28 @@ export function UserAccountManager() {
       );
 
       // Refresh the accounts list
-      fetchUserAccounts(publicKey);
+      setIsLoadingAccounts(true);
+      await fetchUserAccounts(publicKey);
       setShowCreateModal(false);
     } catch (error) {
       console.error("Error initializing user account:", error);
       setStatus(
-        `Error: ${error instanceof Error ? error.message : String(error)}`
+        `${error instanceof Error ? error.message : String(error)}`
       );
     } finally {
       setIsLoading(false);
+      setIsLoadingAccounts(false);
+    }
+  };
+
+  const handleRefreshAccounts = async () => {
+    if (publicKey) {
+      setIsLoadingAccounts(true);
+      try {
+        await fetchUserAccounts(publicKey);
+      } finally {
+        setIsLoadingAccounts(false);
+      }
     }
   };
 
@@ -108,13 +130,14 @@ export function UserAccountManager() {
         <div className="flex space-x-4">
           <button
             onClick={() => setShowCreateModal(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded cursor-pointer transition-colors duration-200"
+            disabled={userAccounts.length >= 8}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded cursor-pointer transition-colors duration-200 disabled:bg-gray-700 disabled:cursor-not-allowed"
           >
             Create New Account
           </button>
           <button
-            onClick={() => fetchUserAccounts(publicKey)}
-            disabled={isLoading || !publicKey}
+            onClick={handleRefreshAccounts}
+            disabled={isLoadingAccounts || !publicKey}
             className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-sm transition-colors duration-200 flex items-center cursor-pointer"
           >
             <RefreshIcon className="w-4 h-4 mr-2" />
@@ -123,7 +146,13 @@ export function UserAccountManager() {
         </div>
       </div>
 
-      {userAccounts.length > 0 ? (
+      {isLoadingAccounts && (
+        <div className="flex justify-center py-8">
+          <LoadingSpinner text="Loading accounts..." />
+        </div>
+      )}
+
+      {!isLoadingAccounts && userAccounts.length > 0 && (
         <div className="space-y-6">
           <div>
             <label className="block mb-2 text-gray-300">Select Account:</label>
@@ -132,13 +161,24 @@ export function UserAccountManager() {
               onChange={(e) => setSelectedAccount(Number(e.target.value))}
               className="border border-gray-600 bg-gray-700 text-white p-2 rounded w-full cursor-pointer"
             >
-              {userAccounts.map((account) => (
-                <option key={account.subAccountId} value={account.subAccountId}>
-                  {account.name
-                    ? new TextDecoder().decode(new Uint8Array(account.name))
-                    : `Account ${account.subAccountId}`}
-                </option>
-              ))}
+              {userAccounts.map((account) => {
+                let displayName;
+                if (account.name) {
+                  displayName = new TextDecoder().decode(
+                    new Uint8Array(account.name)
+                  );
+                } else {
+                  displayName = `Account ${account.subAccountId}`;
+                }
+                return (
+                  <option
+                    key={account.subAccountId}
+                    value={account.subAccountId}
+                  >
+                    {displayName}
+                  </option>
+                );
+              })}
             </select>
           </div>
 
@@ -146,7 +186,9 @@ export function UserAccountManager() {
             <AccountInfoDisplay account={selectedAccountData} />
           )}
         </div>
-      ) : (
+      )}
+
+      {!isLoadingAccounts && userAccounts.length === 0 && (
         <div className="text-center py-8">
           <p className="text-gray-300">
             No accounts found. Create a new account to get started.
@@ -172,7 +214,7 @@ export function UserAccountManager() {
             <div className="space-y-4">
               <div>
                 <label className="block mb-2 text-gray-300">
-                  Account Name (optional):
+                  Account Name:
                 </label>
                 <input
                   type="text"
@@ -180,14 +222,19 @@ export function UserAccountManager() {
                   onChange={(e) => setAccountName(e.target.value)}
                   className="border border-gray-600 bg-gray-700 text-white p-2 rounded w-full"
                   placeholder="My Account"
+                  required
                 />
               </div>
               <button
                 onClick={initializeUserAccount}
-                disabled={isLoading || !publicKey}
+                disabled={isLoading || !publicKey || userAccounts.length >= 8}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded w-full cursor-pointer transition-colors duration-200 disabled:bg-gray-700"
               >
-                {isLoading ? "Processing..." : "Create Account"}
+                {isLoading
+                  ? "Processing..."
+                  : userAccounts.length >= 8
+                  ? "Account Limit Reached"
+                  : "Create Account"}
               </button>
             </div>
             {status && (
