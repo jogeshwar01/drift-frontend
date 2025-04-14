@@ -100,11 +100,13 @@ export const WalletViewer = () => {
           </div>
         </div>
 
-        {isLoadingAccounts ? (
+        {isLoadingAccounts && (
           <div className="flex justify-center py-8">
             <LoadingSpinner text="Loading wallet data..." />
           </div>
-        ) : viewedAccounts.length > 0 ? (
+        )}
+        
+        {!isLoadingAccounts && viewedAccounts.length > 0 && (
           <div className="space-y-6">
             <div>
               <label className="block mb-2 text-gray-300">
@@ -132,8 +134,10 @@ export const WalletViewer = () => {
               <AccountInfoDisplay account={selectedAccountData} />
             )}
           </div>
-        ) : (
-          <div className="text-center py-8">
+        )}
+        
+        {!isLoadingAccounts && viewedAccounts.length === 0 && (
+          <div className="flex justify-center items-center py-8 h-[60vh]">
             <p className="text-gray-300">
               Enter a wallet address to view account data.
             </p>

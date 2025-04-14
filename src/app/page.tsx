@@ -13,7 +13,7 @@ export default function Home() {
   const { publicKey } = useWallet();
 
   const tabs = [
-    { id: "create-account", label: "Create Account" },
+    { id: "create-account", label: "Account" },
     { id: "deposit", label: "Deposit" },
     { id: "withdraw", label: "Withdraw" },
     { id: "trade", label: "Trade" },
@@ -25,32 +25,33 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4 border-b border-gray-700">
           <h1 className="text-2xl font-bold text-white">Drift</h1>
+          
+          {publicKey && (
+            <div className="flex space-x-4">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`
+                    py-2 px-3 rounded-md font-medium text-sm cursor-pointer transition-all duration-200
+                    ${
+                      activeTab === tab.id
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-400 hover:text-gray-300 hover:bg-gray-800"
+                    }
+                  `}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          )}
+          
           <WalletMultiButtonDynamic />
         </div>
 
         {publicKey ? (
           <div className="mt-4">
-            <div className="border-b border-gray-700">
-              <nav className="-mb-px flex space-x-8">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`
-                      py-4 px-1 border-b-2 font-medium text-sm cursor-pointer transition-all duration-200
-                      ${
-                        activeTab === tab.id
-                          ? "border-blue-500 text-blue-400"
-                          : "border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600"
-                      }
-                    `}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </nav>
-            </div>
-
             <div className="mt-4">
               {activeTab === "create-account" && <UserAccountManager />}
               {activeTab === "deposit" && <DepositForm />}
