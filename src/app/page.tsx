@@ -19,7 +19,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="font-[family-name:var(--font-geist-sans)] min-h-screen bg-gray-900">
+    <div className="font-[family-name:var(--font-geist-sans)] min-h-screen bg-gray-900 pb-8"> 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4 border-b border-gray-700">
           <h1 className="text-2xl font-bold text-white">Drift</h1>

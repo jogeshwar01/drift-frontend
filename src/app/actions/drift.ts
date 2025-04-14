@@ -1,6 +1,6 @@
 import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { DriftClient, DriftEnv, IWallet } from "@drift-labs/sdk";
-import { config } from "../config";
+import { config } from "../../config/env";
 
 export async function getDriftClient(
   setDriftClient: (client: DriftClient) => void,

@@ -3,21 +3,7 @@ import { useDriftStore } from "@/store/driftStore";
 import { useState, useEffect } from "react";
 import { PublicKey } from "@solana/web3.js";
 import { UserAccount } from "@drift-labs/sdk";
-import { BN } from "@drift-labs/sdk";
-import { SpotMarkets } from "@drift-labs/sdk";
-
-// Helper function to convert hex string to decimal
-const hexToDecimal = (hex: string): string => {
-  if (!hex || hex === "00") return "0";
-  return new BN(hex, 16).toString();
-};
-
-// Helper function to format balance with sign
-const formatBalance = (value: string, isNegative: boolean = false): string => {
-  if (!value || value === "00") return "0";
-  const decimal = hexToDecimal(value);
-  return isNegative ? `-${decimal}` : decimal;
-};
+import { AccountInfoDisplay } from "./AccountInfoDisplay";
 
 export const WalletViewer = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -55,7 +41,8 @@ export const WalletViewer = () => {
       let publicKey: PublicKey;
       try {
         publicKey = new PublicKey(walletAddress);
-      } catch (e) {
+      } catch (error) {
+        console.error("Invalid wallet address:", error);
         setViewStatus("Invalid wallet address format");
         return;
       }
@@ -84,7 +71,7 @@ export const WalletViewer = () => {
   );
 
   return (
-    <div className="mt-8 p-4 border border-gray-700 rounded-lg bg-gray-800 shadow">
+    <div className="p-4 border border-gray-700 rounded-lg bg-gray-800 shadow">
       <div className="space-y-6">
         <div>
           <h2 className="text-xl font-semibold mb-4 text-white">
@@ -133,114 +120,9 @@ export const WalletViewer = () => {
             </div>
 
             {selectedAccountData && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-medium text-white">
-                        Account Information
-                      </h4>
-                      <div className="mt-2 space-y-2">
-                        <p className="text-gray-300">
-                          <span className="font-medium">Sub Account ID:</span>{" "}
-                          {selectedAccountData.subAccountId}
-                        </p>
-                        <p className="text-gray-300">
-                          <span className="font-medium">Name:</span>{" "}
-                          {selectedAccountData.name
-                            ? new TextDecoder().decode(
-                                new Uint8Array(selectedAccountData.name)
-                              )
-                            : "Unnamed"}
-                        </p>
-                        <p className="text-gray-300">
-                          <span className="font-medium">Authority:</span>{" "}
-                          {selectedAccountData.authority.toString()}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-medium text-white">Token Balances</h4>
-                      <div className="mt-2">
-                        <table className="min-w-full">
-                          <thead>
-                            <tr className="border-b border-gray-700">
-                              <th className="py-2 px-4 text-left text-gray-300">
-                                Token
-                              </th>
-                              <th className="py-2 px-4 text-left text-gray-300">
-                                Balance
-                              </th>
-                              <th className="py-2 px-4 text-left text-gray-300">
-                                Type
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {selectedAccountData.spotPositions.map(
-                              (position, idx) => {
-                                if (
-                                  position.scaledBalance &&
-                                  position.scaledBalance !== "00"
-                                ) {
-                                  const spotConfig =
-                                    SpotMarkets["devnet"][position.marketIndex];
-                                  const symbol =
-                                    spotConfig?.symbol?.toLowerCase() ||
-                                    "unknown";
-                                  const balanceType = Object.keys(
-                                    position.balanceType
-                                  )[0];
-                                  const isNegative = balanceType === "borrow";
-                                  const formattedBalance = formatBalance(
-                                    position.scaledBalance,
-                                    isNegative
-                                  );
-
-                                  return (
-                                    <tr
-                                      key={idx}
-                                      className="border-b border-gray-700"
-                                    >
-                                      <td className="py-2 px-4">
-                                        <div className="flex items-center space-x-2">
-                                          <img
-                                            src={`https://drift-public.s3.eu-central-1.amazonaws.com/assets/icons/markets/${symbol}.svg`}
-                                            alt={symbol}
-                                            className="w-6 h-6"
-                                            onError={(e) => {
-                                              (
-                                                e.target as HTMLImageElement
-                                              ).src = "/placeholder-token.svg";
-                                            }}
-                                          />
-                                          <span className="text-gray-300">
-                                            {symbol.toUpperCase()}
-                                          </span>
-                                        </div>
-                                      </td>
-                                      <td className="py-2 px-4 text-gray-300">
-                                        {formattedBalance}
-                                      </td>
-                                      <td className="py-2 px-4 text-gray-300">
-                                        {balanceType}
-                                      </td>
-                                    </tr>
-                                  );
-                                }
-                                return null;
-                              }
-                            )}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <AccountInfoDisplay
+                account={selectedAccountData}
+              />
             )}
           </div>
         ) : (
@@ -251,7 +133,7 @@ export const WalletViewer = () => {
           </div>
         )}
 
-        {viewStatus && <p className="text-sm text-gray-300">{viewStatus}</p>}
+        {viewStatus && <p className="text-sm text-gray-300 wrap-break-word">{viewStatus}</p>}
         {error && <p className="text-sm text-red-400">{error}</p>}
       </div>
     </div>

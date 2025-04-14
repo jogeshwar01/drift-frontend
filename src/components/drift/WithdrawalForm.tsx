@@ -2,6 +2,7 @@
 import { useDriftStore } from "@/store/driftStore";
 import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { RefreshIcon } from "../icons";
 
 export const WithdrawalForm = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -104,8 +105,9 @@ export const WithdrawalForm = () => {
           <button
             onClick={() => fetchUserAccounts(publicKey)}
             disabled={isLoading || !publicKey}
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg mt-3 transition-colors duration-200"
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg mt-3 transition-colors duration-200 flex items-center"
           >
+            <RefreshIcon className="w-4 h-4 mr-2" />
             Refresh Accounts
           </button>
         </div>
@@ -177,7 +179,7 @@ export const WithdrawalForm = () => {
 
       {withdrawalStatus && (
         <div
-          className={`mt-4 p-3 rounded-lg ${
+          className={`mt-4 p-3 rounded-lg wrap-break-word ${
             withdrawalStatus.includes("Error")
               ? "bg-red-900/30 border border-red-700 text-red-400"
               : "bg-green-900/30 border border-green-700 text-green-400"

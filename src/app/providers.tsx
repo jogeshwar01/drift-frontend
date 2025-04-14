@@ -10,7 +10,7 @@ import { clusterApiUrl } from "@solana/web3.js";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import { DriftProvider } from "@/components/drift/DriftProvider";
 import "@solana/wallet-adapter-react-ui/styles.css";
-import { config } from "./config";
+import { config } from "../config/env";
 
 export default function Providers({
   children,

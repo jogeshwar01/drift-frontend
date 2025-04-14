@@ -3,21 +3,8 @@
 import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useDriftStore } from "@/store/driftStore";
-import { BN } from "@drift-labs/sdk";
-import { SpotMarkets } from "@drift-labs/sdk";
-
-// Helper function to convert hex string to decimal
-const hexToDecimal = (hex: string): string => {
-  if (!hex || hex === "00") return "0";
-  return new BN(hex, 16).toString();
-};
-
-// Helper function to format balance with sign
-const formatBalance = (value: string, isNegative: boolean = false): string => {
-  if (!value || value === "00") return "0";
-  const decimal = hexToDecimal(value);
-  return isNegative ? `-${decimal}` : decimal;
-};
+import { RefreshIcon } from "../icons";
+import { AccountInfoDisplay } from "./AccountInfoDisplay";
 
 export function UserAccountManager() {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -108,12 +95,6 @@ export function UserAccountManager() {
     }
   };
 
-  const handleRefreshAccounts = () => {
-    if (publicKey) {
-      fetchUserAccounts(publicKey);
-    }
-  };
-
   const selectedAccountData = userAccounts.find(
     (account) => account.subAccountId === selectedAccount
   );
@@ -132,10 +113,11 @@ export function UserAccountManager() {
             Create New Account
           </button>
           <button
-            onClick={handleRefreshAccounts}
+            onClick={() => fetchUserAccounts(publicKey)}
             disabled={isLoading || !publicKey}
-            className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded disabled:bg-gray-700 cursor-pointer transition-colors duration-200"
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-sm transition-colors duration-200 flex items-center cursor-pointer"
           >
+            <RefreshIcon className="w-4 h-4 mr-2" />
             Refresh Accounts
           </button>
         </div>
@@ -161,113 +143,7 @@ export function UserAccountManager() {
           </div>
 
           {selectedAccountData && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-medium text-white">
-                      Account Information
-                    </h4>
-                    <div className="mt-2 space-y-2">
-                      <p className="text-gray-300">
-                        <span className="font-medium">Sub Account ID:</span>{" "}
-                        {selectedAccountData.subAccountId}
-                      </p>
-                      <p className="text-gray-300">
-                        <span className="font-medium">Name:</span>{" "}
-                        {selectedAccountData.name
-                          ? new TextDecoder().decode(
-                              new Uint8Array(selectedAccountData.name)
-                            )
-                          : "Unnamed"}
-                      </p>
-                      <p className="text-gray-300">
-                        <span className="font-medium">Authority:</span>{" "}
-                        {selectedAccountData.authority.toString()}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-medium text-white">Token Balances</h4>
-                    <div className="mt-2">
-                      <table className="min-w-full">
-                        <thead>
-                          <tr className="border-b border-gray-700">
-                            <th className="py-2 px-4 text-left text-gray-300">
-                              Token
-                            </th>
-                            <th className="py-2 px-4 text-left text-gray-300">
-                              Balance
-                            </th>
-                            <th className="py-2 px-4 text-left text-gray-300">
-                              Type
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {selectedAccountData.spotPositions.map(
-                            (position, idx) => {
-                              if (
-                                position.scaledBalance &&
-                                position.scaledBalance !== "00"
-                              ) {
-                                const spotConfig =
-                                  SpotMarkets["devnet"][position.marketIndex];
-                                const symbol =
-                                  spotConfig?.symbol?.toLowerCase() ||
-                                  "unknown";
-                                const balanceType = Object.keys(
-                                  position.balanceType
-                                )[0];
-                                const isNegative = balanceType === "borrow";
-                                const formattedBalance = formatBalance(
-                                  position.scaledBalance,
-                                  isNegative
-                                );
-
-                                return (
-                                  <tr
-                                    key={idx}
-                                    className="border-b border-gray-700"
-                                  >
-                                    <td className="py-2 px-4">
-                                      <div className="flex items-center space-x-2">
-                                        <img
-                                          src={`https://drift-public.s3.eu-central-1.amazonaws.com/assets/icons/markets/${symbol}.svg`}
-                                          alt={symbol}
-                                          className="w-6 h-6"
-                                          onError={(e) => {
-                                            (e.target as HTMLImageElement).src =
-                                              "/placeholder-token.svg";
-                                          }}
-                                        />
-                                        <span className="text-gray-300">
-                                          {symbol.toUpperCase()}
-                                        </span>
-                                      </div>
-                                    </td>
-                                    <td className="py-2 px-4 text-gray-300">
-                                      {formattedBalance}
-                                    </td>
-                                    <td className="py-2 px-4 text-gray-300">
-                                      {balanceType}
-                                    </td>
-                                  </tr>
-                                );
-                              }
-                              return null;
-                            }
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <AccountInfoDisplay account={selectedAccountData} />
           )}
         </div>
       ) : (
@@ -280,7 +156,7 @@ export function UserAccountManager() {
 
       {/* Create Account Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium text-white">
@@ -294,18 +170,6 @@ export function UserAccountManager() {
               </button>
             </div>
             <div className="space-y-4">
-              <div>
-                <label className="block mb-2 text-gray-300">
-                  Sub Account ID:
-                </label>
-                <input
-                  type="number"
-                  value={subAccountId}
-                  onChange={(e) => setSubAccountId(Number(e.target.value))}
-                  className="border border-gray-600 bg-gray-700 text-white p-2 rounded w-full"
-                  min="0"
-                />
-              </div>
               <div>
                 <label className="block mb-2 text-gray-300">
                   Account Name (optional):
@@ -326,7 +190,11 @@ export function UserAccountManager() {
                 {isLoading ? "Processing..." : "Create Account"}
               </button>
             </div>
-            {status && <p className="mt-4 text-sm text-gray-300">{status}</p>}
+            {status && (
+              <p className="mt-4 text-sm text-gray-300 wrap-break-word">
+                {status}
+              </p>
+            )}
           </div>
         </div>
       )}

@@ -341,7 +341,7 @@ export const PerpOrderForm = () => {
 
       {orderStatus && (
         <div
-          className={`mt-4 p-4 rounded-lg flex items-start ${
+          className={`mt-4 p-4 rounded-lg flex items-start wrap-break-word ${
             orderStatus.includes("Error")
               ? "bg-red-900/30 border border-red-700 text-red-400"
               : orderStatus.includes("successful")
