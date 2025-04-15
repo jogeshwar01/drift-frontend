@@ -64,7 +64,7 @@ export const OrdersHistory = ({
 
   const handleRefreshOrders = async () => {
     if (!publicKey || isRefreshing) return;
-    
+
     setIsRefreshing(true);
     try {
       await fetchUserAccounts(publicKey);
@@ -82,6 +82,7 @@ export const OrdersHistory = ({
   const formatPrice = (price: string) => {
     return (parseInt(price, 10) / 1e6).toFixed(2);
   };
+
 
   if (isLoading) {
     return (
@@ -120,8 +121,10 @@ export const OrdersHistory = ({
             disabled={isRefreshing || !publicKey}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center ml-4"
           >
-            <RefreshIcon className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-            {isRefreshing ? 'Refreshing...' : 'Refresh Orders'}
+            <RefreshIcon
+              className={`w-4 h-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`}
+            />
+            {isRefreshing ? "Refreshing..." : "Refresh Orders"}
           </button>
         </div>
       </div>
@@ -147,6 +150,9 @@ export const OrdersHistory = ({
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Price
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  Status
                 </th>
               </tr>
             </thead>
@@ -190,6 +196,9 @@ export const OrdersHistory = ({
                     JSON.stringify(OrderType.MARKET)
                       ? `$${formatPrice(order.price)}`
                       : "Market Price"}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm text-white">
+                    {Object.keys(order.status)[0].toUpperCase()}
                   </td>
                 </tr>
               ))}

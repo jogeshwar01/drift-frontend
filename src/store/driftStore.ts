@@ -18,7 +18,7 @@ export const useDriftStore = create<DriftStore>((set, get) => ({
   driftClient: null,
   setDriftClient: (client) => set({ driftClient: client }),
   userAccounts: [],
-  isLoading: false,
+  isLoading: true,
   error: null,
   fetchUserAccounts: async (publicKey, setAccounts = true) => {
     const { driftClient } = get();

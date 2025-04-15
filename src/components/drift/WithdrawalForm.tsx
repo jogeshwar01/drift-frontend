@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { RefreshIcon } from "../icons";
 import { LoadingSpinner } from "../common/LoadingSpinner";
-import { UserAccount } from "@drift-labs/sdk";
+import { SpotMarkets, UserAccount } from "@drift-labs/sdk";
+import { config } from "@/config/env";
 
 export const WithdrawalForm = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -19,9 +20,12 @@ export const WithdrawalForm = () => {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [isLoadingAccounts, setIsLoadingAccounts] = useState<boolean>(false);
   const [availableBalance, setAvailableBalance] = useState<string>("0");
+  const [availableTokens, setAvailableTokens] = useState<
+    { marketIndex: number; symbol: string }[]
+  >([]);
 
-  const formatAmount = (amount: string) => {
-    return (parseInt(amount, 10) / 1e9).toFixed(5);
+  const formatAmount = (amount: string, decimals: number) => {
+    return (parseInt(amount, 10) / 10 ** decimals).toFixed(5);
   };
 
   useEffect(() => {
@@ -40,6 +44,46 @@ export const WithdrawalForm = () => {
     }
   }, [userAccounts, selectedSubAccountId]);
 
+  // Calculate available tokens when subaccount changes
+  useEffect(() => {
+    if (userAccounts.length > 0 && selectedSubAccountId !== undefined) {
+      const selectedAccount = userAccounts.find(
+        (account) => account.subAccountId === selectedSubAccountId
+      );
+
+      if (selectedAccount?.spotPositions) {
+        // Find all positions with deposits
+        const tokensWithDeposits = selectedAccount.spotPositions
+          .filter(
+            (pos) =>
+              pos.cumulativeDeposits &&
+              pos.cumulativeDeposits !== "00" &&
+              parseInt(pos.cumulativeDeposits, 16) > 0
+          )
+          .map((pos) => {
+            const spotMarket = SpotMarkets[config.NETWORK].find(
+              (market) => market.marketIndex === pos.marketIndex
+            );
+            return {
+              marketIndex: pos.marketIndex,
+              symbol: spotMarket?.symbol ?? `Token ${pos.marketIndex}`,
+            };
+          });
+
+        setAvailableTokens(tokensWithDeposits);
+
+        // If we have tokens with deposits but current marketIndex isn't one of them,
+        // set marketIndex to the first available token
+        if (
+          tokensWithDeposits.length > 0 &&
+          !tokensWithDeposits.some((token) => token.marketIndex === marketIndex)
+        ) {
+          setMarketIndex(tokensWithDeposits[0].marketIndex);
+        }
+      }
+    }
+  }, [userAccounts, selectedSubAccountId, marketIndex]);
+
   // Update available balance when subaccount or market index changes
   useEffect(() => {
     if (userAccounts.length > 0 && selectedSubAccountId !== undefined) {
@@ -47,14 +91,22 @@ export const WithdrawalForm = () => {
         (account) => account.subAccountId === selectedSubAccountId
       );
 
-      if (selectedAccount && selectedAccount.spotPositions) {
+      if (selectedAccount?.spotPositions) {
         const position = selectedAccount.spotPositions.find(
           (pos) => pos.marketIndex === marketIndex
         );
 
         if (position) {
           const balance = position.cumulativeDeposits;
-          const formattedBalance = formatAmount(balance);
+
+          const spotMarket = SpotMarkets[config.NETWORK].find((marketData) => {
+            return marketData.marketIndex === marketIndex;
+          });
+
+          const formattedBalance = formatAmount(
+            balance,
+            spotMarket?.precisionExp ?? 9
+          );
           setAvailableBalance(formattedBalance);
           setAmount(formattedBalance); // Set amount to available balance
         } else {
@@ -216,8 +268,17 @@ export const WithdrawalForm = () => {
               onChange={(e) => setMarketIndex(Number(e.target.value))}
               className="w-full bg-gray-700 text-white rounded-lg p-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
             >
-              <option value={1}>SOL</option>
-              <option value={0}>USDC</option>
+              {availableTokens.length > 0 ? (
+                availableTokens.map((token) => (
+                  <option key={token.marketIndex} value={token.marketIndex}>
+                    {token.symbol}
+                  </option>
+                ))
+              ) : (
+                <option value={0} disabled>
+                  No tokens available for withdrawal
+                </option>
+              )}
             </select>
           </div>
 
@@ -225,7 +286,9 @@ export const WithdrawalForm = () => {
             <p className="text-sm text-gray-300">
               Available Balance:{" "}
               <span className="text-white font-medium">
-                {availableBalance} {marketIndex === 1 ? "SOL" : "USDC"}
+                {availableBalance}{" "}
+                {availableTokens.find((t) => t.marketIndex === marketIndex)
+                  ?.symbol || ""}
               </span>
             </p>
           </div>
@@ -246,7 +309,8 @@ export const WithdrawalForm = () => {
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                 <span className="text-gray-400">
-                  {marketIndex === 1 ? "SOL" : "USDC"}
+                  {availableTokens.find((t) => t.marketIndex === marketIndex)
+                    ?.symbol || ""}
                 </span>
               </div>
             </div>
@@ -259,7 +323,8 @@ export const WithdrawalForm = () => {
               !publicKey ||
               isLoadingAccounts ||
               parseFloat(amount) <= 0 ||
-              parseFloat(amount) > parseFloat(availableBalance)
+              parseFloat(amount) > parseFloat(availableBalance) ||
+              availableTokens.length === 0
             }
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition-colors duration-200 disabled:bg-gray-600 disabled:cursor-not-allowed"
           >

@@ -10,7 +10,7 @@ import { LoadingSpinner } from "../common/LoadingSpinner";
 export function UserAccountManager() {
   const driftClient = useDriftStore((state) => state.driftClient);
   const { publicKey, signTransaction } = useWallet();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const isLoading = useDriftStore((state) => state.isLoading);
   const [status, setStatus] = useState<string>("");
   const [accountName, setAccountName] = useState<string>("");
   const [selectedAccount, setSelectedAccount] = useState<number | null>(null);
@@ -61,7 +61,6 @@ export function UserAccountManager() {
     }
 
     try {
-      setIsLoading(true);
       setStatus("Initializing user account...");
 
       // Get the initialization instructions
@@ -98,7 +97,6 @@ export function UserAccountManager() {
       console.error("Error initializing user account:", error);
       setStatus(`${error instanceof Error ? error.message : String(error)}`);
     } finally {
-      setIsLoading(false);
       setIsLoadingAccounts(false);
     }
   };
@@ -141,13 +139,13 @@ export function UserAccountManager() {
         </div>
       </div>
 
-      {isLoadingAccounts && (
+      {(isLoadingAccounts || isLoading) && (
         <div className="flex justify-center py-8">
           <LoadingSpinner text="Loading accounts..." />
         </div>
       )}
 
-      {!isLoadingAccounts && userAccounts.length > 0 && (
+      {!isLoadingAccounts && !isLoading && userAccounts.length > 0 && (
         <div className="space-y-6">
           <div>
             <label className="block mb-2 text-gray-300">Select Account:</label>
@@ -183,7 +181,7 @@ export function UserAccountManager() {
         </div>
       )}
 
-      {!isLoadingAccounts && userAccounts.length === 0 && (
+      {!isLoadingAccounts && !isLoading && userAccounts.length === 0 && (
         <div className="text-center py-8 h-[60vh] flex justify-center items-center">
           <p className="text-gray-300">
             No accounts found. Create a new account to get started.
