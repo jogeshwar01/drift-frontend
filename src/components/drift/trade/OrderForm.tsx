@@ -6,17 +6,15 @@ import {
   OptionalOrderParams,
   OrderType,
   PositionDirection,
+  MarketType,
 } from "@drift-labs/sdk";
 import {
-  MARKET_ICONS,
   MARKET_SYMBOLS,
   MARKET_NAMES,
-  PLACEHOLDER_ICON,
 } from "@/config/constants";
 import {
   WarningIcon,
   RefreshIcon,
-  ChevronDownIcon,
   ChartIcon,
   CurrencyIcon,
   LongIcon,
@@ -25,17 +23,13 @@ import {
   SuccessIcon,
   ErrorIcon,
 } from "@/components/icons";
-import Image from "next/image";
-import { SubAccountSelector } from "./SubAccountSelector";
 
 interface OrderFormProps {
   selectedSubAccountId: number;
-  onSubAccountChange: (subAccountId: number) => void;
 }
 
 export const OrderForm = ({
   selectedSubAccountId,
-  onSubAccountChange,
 }: OrderFormProps) => {
   const driftClient = useDriftStore((state) => state.driftClient);
   const { publicKey, signTransaction } = useWallet();
@@ -52,6 +46,12 @@ export const OrderForm = ({
   const [baseAssetAmount, setBaseAssetAmount] = useState<string>("0.1");
   const [price, setPrice] = useState<string>("100");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
+
+  // Scale order states
+  const [isScaleOrder, setIsScaleOrder] = useState<boolean>(false);
+  const [startPrice, setStartPrice] = useState<string>("100");
+  const [endPrice, setEndPrice] = useState<string>("110");
+  const [orderCount, setOrderCount] = useState<string>("3");
 
   useEffect(() => {
     if (publicKey) {
@@ -74,46 +74,108 @@ export const OrderForm = ({
       setIsProcessing(true);
       setOrderStatus("Preparing order transaction...");
 
-      // Convert amounts to the correct precision
-      const amount = driftClient.convertToPerpPrecision(
-        parseFloat(baseAssetAmount)
-      );
-      // Create order parameters
-      const orderParams: OptionalOrderParams = {
-        orderType,
-        marketIndex,
-        direction,
-        baseAssetAmount: amount,
-      };
+      if (isScaleOrder) {
+        // Handle scale orders
+        const start = parseFloat(startPrice);
+        const end = parseFloat(endPrice);
+        const count = parseInt(orderCount);
 
-      if (JSON.stringify(orderType) === JSON.stringify(OrderType.LIMIT)) {
-        orderParams.price = driftClient.convertToPricePrecision(
-          parseFloat(price)
+        if (count <= 0) {
+          throw new Error("Order count must be greater than 0");
+        }
+
+        if (start === end) {
+          throw new Error("Start and end prices must be different");
+        }
+
+        // Calculate price step
+        const step = (end - start) / (count - 1);
+
+        // Create multiple order parameters
+        const placeOrderParams: OptionalOrderParams[] = [];
+
+        for (let i = 0; i < count; i++) {
+          const currentPrice = start + step * i;
+          const amount = driftClient.convertToPerpPrecision(
+            parseFloat(baseAssetAmount) / count
+          );
+
+          placeOrderParams.push({
+            orderType: OrderType.LIMIT,
+            marketType: MarketType.PERP,
+            marketIndex,
+            direction,
+            baseAssetAmount: amount,
+            price: driftClient.convertToPricePrecision(currentPrice),
+          });
+        }
+
+        // Get the order instructions
+        const orderIxs = await driftClient.getPlaceOrdersIx(
+          placeOrderParams,
+          selectedSubAccountId
+        );
+
+        // Build transaction from instructions
+        const tx = await driftClient.buildTransaction(orderIxs);
+
+        // Sign the transaction with the user's wallet
+        const signedTx = await signTransaction(tx);
+
+        // Send the transaction
+        const { txSig } = await driftClient.sendTransaction(
+          signedTx,
+          [],
+          driftClient.opts
+        );
+
+        setOrderStatus(
+          `Scale orders placed successfully! Transaction signature: ${txSig}`
+        );
+      } else {
+        // Handle single order (market or limit)
+        // Convert amounts to the correct precision
+        const amount = driftClient.convertToPerpPrecision(
+          parseFloat(baseAssetAmount)
+        );
+        // Create order parameters
+        const orderParams: OptionalOrderParams = {
+          orderType,
+          marketType: MarketType.PERP,
+          marketIndex,
+          direction,
+          baseAssetAmount: amount,
+        };
+
+        if (JSON.stringify(orderType) === JSON.stringify(OrderType.LIMIT)) {
+          orderParams.price = driftClient.convertToPricePrecision(
+            parseFloat(price)
+          );
+        }
+
+        // Get the order instructions
+        const orderIxs = await driftClient.getPlacePerpOrderIx(
+          orderParams,
+          selectedSubAccountId
+        );
+
+        // Build transaction from instructions
+        const tx = await driftClient.buildTransaction(orderIxs);
+
+        // Sign the transaction with the user's wallet
+        const signedTx = await signTransaction(tx);
+
+        // Send the transaction
+        const { txSig } = await driftClient.sendTransaction(
+          signedTx,
+          [],
+          driftClient.opts
+        );
+
+        setOrderStatus(
+          `Order placed successfully! Transaction signature: ${txSig}`
         );
       }
-
-      // Get the order instructions
-      const orderIxs = await driftClient.getPlacePerpOrderIx(
-        orderParams,
-        selectedSubAccountId
-      );
-
-      // Build transaction from instructions
-      const tx = await driftClient.buildTransaction(orderIxs);
-
-      // Sign the transaction with the user's wallet
-      const signedTx = await signTransaction(tx);
-
-      // Send the transaction
-      const { txSig } = await driftClient.sendTransaction(
-        signedTx,
-        [],
-        driftClient.opts
-      );
-
-      setOrderStatus(
-        `Order placed successfully! Transaction signature: ${txSig}`
-      );
     } catch (error) {
       console.error("Error placing order:", error);
       setOrderStatus(
@@ -149,27 +211,6 @@ export const OrderForm = ({
 
   return (
     <div className="w-full md:w-2/5 space-y-6">
-      <SubAccountSelector
-        selectedSubAccountId={selectedSubAccountId}
-        onSubAccountChange={onSubAccountChange}
-      />
-
-      <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">
-          Order Type
-        </label>
-        <select
-          value={JSON.stringify(orderType)}
-          onChange={(e) =>
-            setOrderType(JSON.parse(e.target.value) as OrderType)
-          }
-          className="w-full bg-gray-700 text-white rounded-lg p-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-        >
-          <option value={JSON.stringify(OrderType.LIMIT)}>Limit</option>
-          <option value={JSON.stringify(OrderType.MARKET)}>Market</option>
-        </select>
-      </div>
-
       <div>
         <label className="block text-sm font-medium text-gray-300 mb-2">
           Direction
@@ -206,40 +247,24 @@ export const OrderForm = ({
 
       <div>
         <label className="block text-sm font-medium text-gray-300 mb-2">
-          Market
+          Order Type
         </label>
-        <div className="relative">
-          <select
-            value={marketIndex}
-            onChange={(e) => setMarketIndex(Number(e.target.value))}
-            className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors appearance-none"
-          >
-            {Object.entries(MARKET_NAMES).map(([index, name]) => (
-              <option key={index} value={index}>
-                {name}
-              </option>
-            ))}
-          </select>
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <Image
-              src={
-                MARKET_ICONS[
-                  getMarketSymbol(marketIndex) as keyof typeof MARKET_ICONS
-                ] || PLACEHOLDER_ICON
-              }
-              alt={getMarketSymbol(marketIndex)}
-              className="w-5 h-5"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = PLACEHOLDER_ICON;
-              }}
-              width={20}
-              height={20}
-            />
-          </div>
-          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-            <ChevronDownIcon className="w-5 h-5 text-gray-400" />
-          </div>
-        </div>
+        <select
+          value={isScaleOrder ? "scale" : JSON.stringify(orderType)}
+          onChange={(e) => {
+            if (e.target.value === "scale") {
+              setIsScaleOrder(true);
+            } else {
+              setIsScaleOrder(false);
+              setOrderType(JSON.parse(e.target.value) as OrderType);
+            }
+          }}
+          className="w-full bg-gray-700 text-white rounded-lg p-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+        >
+          <option value={JSON.stringify(OrderType.LIMIT)}>Limit</option>
+          <option value={JSON.stringify(OrderType.MARKET)}>Market</option>
+          <option value="scale">Scale</option>
+        </select>
       </div>
 
       <div>
@@ -266,39 +291,108 @@ export const OrderForm = ({
         </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">
-          Price
-        </label>
-        <div className="relative">
-          <input
-            type="number"
-            value={
-              JSON.stringify(orderType) !== JSON.stringify(OrderType.MARKET)
-                ? price
-                : ""
-            }
-            onChange={(e) => setPrice(e.target.value)}
-            placeholder={
-              JSON.stringify(orderType) === JSON.stringify(OrderType.MARKET)
-                ? "Market Price"
-                : ""
-            }
-            disabled={
-              JSON.stringify(orderType) === JSON.stringify(OrderType.MARKET)
-            }
-            className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors disabled:bg-gray-600 disabled:text-gray-400"
-            min="0"
-            step="0.1"
-          />
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <CurrencyIcon className="w-5 h-5 text-gray-400" />
+      {isScaleOrder ? (
+        <>
+          <div className="flex space-x-4">
+            <div className="w-1/2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Start Price
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  value={startPrice}
+                  onChange={(e) => setStartPrice(e.target.value)}
+                  className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  min="0"
+                  step="0.1"
+                />
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <CurrencyIcon className="w-5 h-5 text-gray-400" />
+                </div>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <span className="text-gray-400">USD</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-1/2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                End Price
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  value={endPrice}
+                  onChange={(e) => setEndPrice(e.target.value)}
+                  className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  min="0"
+                  step="0.1"
+                />
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <CurrencyIcon className="w-5 h-5 text-gray-400" />
+                </div>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <span className="text-gray-400">USD</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-            <span className="text-gray-400">USD</span>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Number of Orders
+            </label>
+            <div className="relative">
+              <input
+                type="number"
+                value={orderCount}
+                onChange={(e) => setOrderCount(e.target.value)}
+                className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                min="2"
+                step="1"
+              />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <ChartIcon className="w-5 h-5 text-gray-400" />
+              </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Price
+          </label>
+          <div className="relative">
+            <input
+              type="number"
+              value={
+                JSON.stringify(orderType) !== JSON.stringify(OrderType.MARKET)
+                  ? price
+                  : ""
+              }
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder={
+                JSON.stringify(orderType) === JSON.stringify(OrderType.MARKET)
+                  ? "Market Price"
+                  : ""
+              }
+              disabled={
+                JSON.stringify(orderType) === JSON.stringify(OrderType.MARKET)
+              }
+              className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors disabled:bg-gray-600 disabled:text-gray-400"
+              min="0"
+              step="0.1"
+            />
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <CurrencyIcon className="w-5 h-5 text-gray-400" />
+            </div>
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <span className="text-gray-400">USD</span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <button
         onClick={handlePlaceOrder}
@@ -321,7 +415,9 @@ export const OrderForm = ({
             ) : (
               <ShortIcon className="w-5 h-5 mr-2" />
             )}
-            {direction === PositionDirection.LONG
+            {isScaleOrder
+              ? "Place Scale Orders"
+              : direction === PositionDirection.LONG
               ? "Buy / Long"
               : "Sell / Short"}{" "}
             {MARKET_NAMES[marketIndex as keyof typeof MARKET_NAMES]}

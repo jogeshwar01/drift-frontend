@@ -21,7 +21,7 @@ export const SubAccountSelector = ({
   };
 
   return (
-    <div>
+    <div className="w-full">
       <label className="block text-sm font-medium text-gray-300 mb-2">
         Select Account
       </label>

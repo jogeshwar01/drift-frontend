@@ -2,9 +2,11 @@
 import { OrderForm } from "./trade/OrderForm";
 import { OrdersHistory } from "./trade/OrdersHistory";
 import { DriftPriceChart } from "./DriftPriceChart";
-import { OrderIcon } from "@/components/icons";
 import { useState, useEffect } from "react";
 import { useDriftStore } from "@/store/driftStore";
+import { MARKET_ICONS, PLACEHOLDER_ICON } from "@/config/constants";
+import Image from "next/image";
+import { SubAccountSelector } from "./trade/SubAccountSelector";
 
 export const PerpOrderForm = () => {
   const userAccounts = useDriftStore((state) => state.userAccounts);
@@ -30,10 +32,31 @@ export const PerpOrderForm = () => {
 
   return (
     <div className="bg-gray-800 rounded-lg p-6 shadow-lg border border-gray-700">
-      <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
-        <OrderIcon className="w-6 h-6 mr-2 text-blue-400" />
-        Place Perpetual Order
-      </h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
+          <Image
+            src={
+              MARKET_ICONS["SOL" as keyof typeof MARKET_ICONS] ||
+              PLACEHOLDER_ICON
+            }
+            alt={"SOL" as keyof typeof MARKET_ICONS}
+            className="w-5 h-5"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = PLACEHOLDER_ICON;
+            }}
+            width={20}
+            height={20}
+          />
+          <div className="ml-2">SOL-PERP</div>
+        </h2>
+
+        <div className="flex items-center gap-2 w-2/5 px-2">
+          <SubAccountSelector
+            selectedSubAccountId={selectedSubAccountId}
+            onSubAccountChange={switchAccount}
+          />
+        </div>
+      </div>
 
       <div className="flex flex-col gap-6">
         <div className="flex flex-col md:flex-row gap-6">
@@ -44,10 +67,7 @@ export const PerpOrderForm = () => {
             />
           </div>
 
-          <OrderForm
-            selectedSubAccountId={selectedSubAccountId}
-            onSubAccountChange={switchAccount}
-          />
+          <OrderForm selectedSubAccountId={selectedSubAccountId} />
         </div>
 
         <div className="w-full">
