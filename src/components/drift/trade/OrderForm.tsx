@@ -7,6 +7,7 @@ import {
   OrderType,
   PositionDirection,
   MarketType,
+  OrderTriggerCondition,
 } from "@drift-labs/sdk";
 import {
   MARKET_SYMBOLS,
@@ -45,7 +46,9 @@ export const OrderForm = ({
   );
   const [baseAssetAmount, setBaseAssetAmount] = useState<string>("0.1");
   const [price, setPrice] = useState<string>("100");
+  const [triggerPrice, setTriggerPrice] = useState<string>("100");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [orderVariant, setOrderVariant] = useState<string>("limit"); // "limit", "market", "takeProfit", "stopLimit"
 
   // Scale order states
   const [isScaleOrder, setIsScaleOrder] = useState<boolean>(false);
@@ -133,11 +136,12 @@ export const OrderForm = ({
           `Scale orders placed successfully! Transaction signature: ${txSig}`
         );
       } else {
-        // Handle single order (market or limit)
+        // Handle single order (market, limit, or trigger)
         // Convert amounts to the correct precision
         const amount = driftClient.convertToPerpPrecision(
           parseFloat(baseAssetAmount)
         );
+        
         // Create order parameters
         const orderParams: OptionalOrderParams = {
           orderType,
@@ -147,10 +151,33 @@ export const OrderForm = ({
           baseAssetAmount: amount,
         };
 
-        if (JSON.stringify(orderType) === JSON.stringify(OrderType.LIMIT)) {
+        // Add price for limit orders
+        if (orderVariant === "limit" || orderVariant === "takeProfit" || orderVariant === "stopLimit") {
           orderParams.price = driftClient.convertToPricePrecision(
             parseFloat(price)
           );
+        }
+        
+        // Add trigger price and condition for trigger orders (take profit and stop limit)
+        if (orderVariant === "takeProfit" || orderVariant === "stopLimit") {
+          orderParams.triggerPrice = driftClient.convertToPricePrecision(
+            parseFloat(triggerPrice)
+          );
+          
+          // Set trigger condition based on order variant and direction
+          // Take Profit: Executes when price moves favorably (above entry for longs, below entry for shorts)
+          // Stop Limit: Executes when price moves unfavorably (below entry for longs, above entry for shorts)
+          if (orderVariant === "takeProfit") {
+            // Take profit conditions
+            orderParams.triggerCondition = direction === PositionDirection.LONG
+              ? OrderTriggerCondition.ABOVE  // For long positions, trigger when price goes above the trigger price
+              : OrderTriggerCondition.BELOW; // For short positions, trigger when price goes below the trigger price
+          } else {
+            // Stop limit conditions
+            orderParams.triggerCondition = direction === PositionDirection.LONG
+              ? OrderTriggerCondition.BELOW  // For long positions, trigger when price goes below the trigger price
+              : OrderTriggerCondition.ABOVE; // For short positions, trigger when price goes above the trigger price
+          }
         }
 
         // Get the order instructions
@@ -219,7 +246,7 @@ export const OrderForm = ({
           <button
             onClick={() => setDirection(PositionDirection.LONG)}
             className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
-              direction === PositionDirection.LONG
+              JSON.stringify(direction) === JSON.stringify(PositionDirection.LONG)
                 ? "bg-green-600 text-white"
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
             }`}
@@ -232,7 +259,7 @@ export const OrderForm = ({
           <button
             onClick={() => setDirection(PositionDirection.SHORT)}
             className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
-              direction === PositionDirection.SHORT
+              JSON.stringify(direction) === JSON.stringify(PositionDirection.SHORT)
                 ? "bg-red-600 text-white"
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
             }`}
@@ -250,19 +277,31 @@ export const OrderForm = ({
           Order Type
         </label>
         <select
-          value={isScaleOrder ? "scale" : JSON.stringify(orderType)}
+          value={isScaleOrder ? "scale" : orderVariant}
           onChange={(e) => {
-            if (e.target.value === "scale") {
+            const value = e.target.value;
+            if (value === "scale") {
               setIsScaleOrder(true);
             } else {
               setIsScaleOrder(false);
-              setOrderType(JSON.parse(e.target.value) as OrderType);
+              setOrderVariant(value);
+              
+              // Set the appropriate OrderType based on the variant
+              if (value === "market") {
+                setOrderType(OrderType.MARKET);
+              } else if (value === "limit") {
+                setOrderType(OrderType.LIMIT);
+              } else if (value === "takeProfit" || value === "stopLimit") {
+                setOrderType(OrderType.TRIGGER_LIMIT);
+              }
             }
           }}
           className="w-full bg-gray-700 text-white rounded-lg p-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
         >
-          <option value={JSON.stringify(OrderType.LIMIT)}>Limit</option>
-          <option value={JSON.stringify(OrderType.MARKET)}>Market</option>
+          <option value="limit">Limit</option>
+          <option value="market">Market</option>
+          <option value="takeProfit">Take Profit</option>
+          <option value="stopLimit">Stop Limit</option>
           <option value="scale">Scale</option>
         </select>
       </div>
@@ -359,46 +398,65 @@ export const OrderForm = ({
           </div>
         </>
       ) : (
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            Price
-          </label>
-          <div className="relative">
-            <input
-              type="number"
-              value={
-                JSON.stringify(orderType) !== JSON.stringify(OrderType.MARKET)
-                  ? price
-                  : ""
-              }
-              onChange={(e) => setPrice(e.target.value)}
-              placeholder={
-                JSON.stringify(orderType) === JSON.stringify(OrderType.MARKET)
-                  ? "Market Price"
-                  : ""
-              }
-              disabled={
-                JSON.stringify(orderType) === JSON.stringify(OrderType.MARKET)
-              }
-              className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors disabled:bg-gray-600 disabled:text-gray-400"
-              min="0"
-              step="0.1"
-            />
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <CurrencyIcon className="w-5 h-5 text-gray-400" />
-            </div>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <span className="text-gray-400">USD</span>
+        <>
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Price
+            </label>
+            <div className="relative">
+              <input
+                type="number"
+                value={orderVariant !== "market" ? price : ""}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder={orderVariant === "market" ? "Market Price" : ""}
+                disabled={orderVariant === "market"}
+                className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors disabled:bg-gray-600 disabled:text-gray-400"
+                min="0"
+                step="0.1"
+              />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <CurrencyIcon className="w-5 h-5 text-gray-400" />
+              </div>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <span className="text-gray-400">USD</span>
+              </div>
             </div>
           </div>
-        </div>
+
+          {(orderVariant === "takeProfit" || orderVariant === "stopLimit") && (
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Trigger Price
+                {orderVariant === "takeProfit" ? 
+                  ` (${direction === PositionDirection.LONG ? "Above" : "Below"} this price)` : 
+                  ` (${direction === PositionDirection.LONG ? "Below" : "Above"} this price)`}
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  value={triggerPrice}
+                  onChange={(e) => setTriggerPrice(e.target.value)}
+                  className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  min="0"
+                  step="0.1"
+                />
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <CurrencyIcon className="w-5 h-5 text-gray-400" />
+                </div>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <span className="text-gray-400">USD</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       <button
         onClick={handlePlaceOrder}
         disabled={isProcessing || !publicKey}
         className={`w-full py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center ${
-          direction === PositionDirection.LONG
+          JSON.stringify(direction) === JSON.stringify(PositionDirection.LONG)
             ? "bg-green-600 hover:bg-green-700 disabled:bg-gray-600"
             : "bg-red-600 hover:bg-red-700 disabled:bg-gray-600"
         } text-white disabled:cursor-not-allowed`}
@@ -410,14 +468,14 @@ export const OrderForm = ({
           </>
         ) : (
           <>
-            {direction === PositionDirection.LONG ? (
+            {JSON.stringify(direction) === JSON.stringify(PositionDirection.LONG) ? (
               <LongIcon className="w-5 h-5 mr-2" />
             ) : (
               <ShortIcon className="w-5 h-5 mr-2" />
             )}
             {isScaleOrder
               ? "Place Scale Orders"
-              : direction === PositionDirection.LONG
+              : JSON.stringify(direction) === JSON.stringify(PositionDirection.LONG)
               ? "Buy / Long"
               : "Sell / Short"}{" "}
             {MARKET_NAMES[marketIndex as keyof typeof MARKET_NAMES]}

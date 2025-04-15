@@ -33,21 +33,21 @@ export const PerpOrderForm = () => {
   return (
     <div className="bg-gray-800 rounded-lg p-6 shadow-lg border border-gray-700">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
+        <h2 className="text-xl font-semibold text-white flex items-center">
           <Image
             src={
               MARKET_ICONS["SOL" as keyof typeof MARKET_ICONS] ||
               PLACEHOLDER_ICON
             }
             alt={"SOL" as keyof typeof MARKET_ICONS}
-            className="w-5 h-5"
+            className="w-8 h-8"
             onError={(e) => {
               (e.target as HTMLImageElement).src = PLACEHOLDER_ICON;
             }}
             width={20}
             height={20}
           />
-          <div className="ml-2">SOL-PERP</div>
+          <div className="ml-4 text-2xl">SOL-PERP</div>
         </h2>
 
         <div className="flex items-center gap-2 w-2/5 px-2">

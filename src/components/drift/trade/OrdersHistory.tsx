@@ -83,7 +83,6 @@ export const OrdersHistory = ({
     return (parseInt(price, 10) / 1e6).toFixed(2);
   };
 
-
   if (isLoading) {
     return (
       <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
@@ -167,10 +166,7 @@ export const OrdersHistory = ({
                     }
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-white">
-                    {JSON.stringify(order.orderType) ===
-                    JSON.stringify(OrderType.MARKET)
-                      ? "Market"
-                      : "Limit"}
+                    {Object.keys(order.orderType)[0].toUpperCase()}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm">
                     <div className="flex items-center">
