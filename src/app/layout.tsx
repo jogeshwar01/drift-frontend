@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Drift Frontend",
   description: "Drift Frontend",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
