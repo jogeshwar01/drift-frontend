@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { RefreshIcon } from "../icons";
 import { LoadingSpinner } from "../common/LoadingSpinner";
+import { UserAccount } from "@drift-labs/sdk";
 
 export const DepositForm = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -104,6 +105,14 @@ export const DepositForm = () => {
     }
   };
 
+  const getAccountName = (account: UserAccount) => {
+    if (account.name) {
+      return new TextDecoder().decode(new Uint8Array(account.name));
+    } else {
+      return `Account ${account.subAccountId}`;
+    }
+  };
+
   return (
     <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
       <h2 className="text-xl font-semibold text-white mb-6">Deposit Funds</h2>
@@ -139,9 +148,7 @@ export const DepositForm = () => {
             >
               {userAccounts.map((account) => (
                 <option key={account.subAccountId} value={account.subAccountId}>
-                  {account.name
-                    ? new TextDecoder().decode(new Uint8Array(account.name))
-                    : `Account ${account.subAccountId}`}
+                  {getAccountName(account)}
                 </option>
               ))}
             </select>

@@ -52,7 +52,7 @@ export const OrdersHistory = () => {
   }, [userAccounts]);
 
   const formatAmount = (amount: string) => {
-    return (parseInt(amount, 16) / 1e9).toFixed(2);
+    return (parseInt(amount, 16) / 1e9).toFixed(5);
   };
 
   const formatPrice = (price: string) => {

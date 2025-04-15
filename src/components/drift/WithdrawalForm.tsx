@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { RefreshIcon } from "../icons";
 import { LoadingSpinner } from "../common/LoadingSpinner";
+import { UserAccount } from "@drift-labs/sdk";
 
 export const WithdrawalForm = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -17,6 +18,11 @@ export const WithdrawalForm = () => {
   const [selectedSubAccountId, setSelectedSubAccountId] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [isLoadingAccounts, setIsLoadingAccounts] = useState<boolean>(false);
+  const [availableBalance, setAvailableBalance] = useState<string>("0");
+
+  const formatAmount = (amount: string) => {
+    return (parseInt(amount, 10) / 1e9).toFixed(5);
+  };
 
   useEffect(() => {
     if (publicKey) {
@@ -34,6 +40,31 @@ export const WithdrawalForm = () => {
     }
   }, [userAccounts, selectedSubAccountId]);
 
+  // Update available balance when subaccount or market index changes
+  useEffect(() => {
+    if (userAccounts.length > 0 && selectedSubAccountId !== undefined) {
+      const selectedAccount = userAccounts.find(
+        (account) => account.subAccountId === selectedSubAccountId
+      );
+
+      if (selectedAccount && selectedAccount.spotPositions) {
+        const position = selectedAccount.spotPositions.find(
+          (pos) => pos.marketIndex === marketIndex
+        );
+
+        if (position) {
+          const balance = position.cumulativeDeposits;
+          const formattedBalance = formatAmount(balance);
+          setAvailableBalance(formattedBalance);
+          setAmount(formattedBalance); // Set amount to available balance
+        } else {
+          setAvailableBalance("0");
+          setAmount("0");
+        }
+      }
+    }
+  }, [userAccounts, selectedSubAccountId, marketIndex, driftClient]);
+
   const handleWithdraw = async () => {
     if (!driftClient || !publicKey || !signTransaction) {
       setWithdrawalStatus("Please connect your wallet first");
@@ -42,6 +73,12 @@ export const WithdrawalForm = () => {
 
     if (userAccounts.length === 0) {
       setWithdrawalStatus("You need to create an account first");
+      return;
+    }
+
+    // Check if amount is greater than available balance
+    if (parseFloat(amount) > parseFloat(availableBalance)) {
+      setWithdrawalStatus("Error: Amount exceeds available balance");
       return;
     }
 
@@ -110,6 +147,22 @@ export const WithdrawalForm = () => {
     }
   };
 
+  const getAccountName = (account: UserAccount) => {
+    if (account.name) {
+      return new TextDecoder().decode(new Uint8Array(account.name));
+    } else {
+      return `Account ${account.subAccountId}`;
+    }
+  };
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputAmount = e.target.value;
+    // Only allow setting amount if it's not greater than available balance
+    if (inputAmount === "" || parseFloat(inputAmount) <= parseFloat(availableBalance)) {
+      setAmount(inputAmount);
+    }
+  };
+
   return (
     <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
       <h2 className="text-xl font-semibold text-white mb-6">Withdraw Funds</h2>
@@ -145,9 +198,7 @@ export const WithdrawalForm = () => {
             >
               {userAccounts.map((account) => (
                 <option key={account.subAccountId} value={account.subAccountId}>
-                  {account.name
-                    ? new TextDecoder().decode(new Uint8Array(account.name))
-                    : `Account ${account.subAccountId}`}
+                  {getAccountName(account)}
                 </option>
               ))}
             </select>
@@ -167,6 +218,15 @@ export const WithdrawalForm = () => {
             </select>
           </div>
 
+          <div className="bg-gray-700/50 p-3 rounded-lg border border-gray-600">
+            <p className="text-sm text-gray-300">
+              Available Balance:{" "}
+              <span className="text-white font-medium">
+                {availableBalance} {marketIndex === 1 ? "SOL" : "USDC"}
+              </span>
+            </p>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Amount
@@ -175,10 +235,11 @@ export const WithdrawalForm = () => {
               <input
                 type="number"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={handleAmountChange}
                 className="w-full bg-gray-700 text-white rounded-lg p-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                 min="0"
                 step="0.1"
+                max={availableBalance}
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                 <span className="text-gray-400">
@@ -190,7 +251,7 @@ export const WithdrawalForm = () => {
 
           <button
             onClick={handleWithdraw}
-            disabled={isProcessing || !publicKey || isLoadingAccounts}
+            disabled={isProcessing || !publicKey || isLoadingAccounts || parseFloat(amount) <= 0 || parseFloat(amount) > parseFloat(availableBalance)}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition-colors duration-200 disabled:bg-gray-600 disabled:cursor-not-allowed"
           >
             {isProcessing ? "Processing..." : "Withdraw"}
