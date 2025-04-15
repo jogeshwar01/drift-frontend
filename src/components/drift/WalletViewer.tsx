@@ -105,7 +105,7 @@ export const WalletViewer = () => {
             <LoadingSpinner text="Loading wallet data..." />
           </div>
         )}
-        
+
         {!isLoadingAccounts && viewedAccounts.length > 0 && (
           <div className="space-y-6">
             <div>
@@ -135,7 +135,7 @@ export const WalletViewer = () => {
             )}
           </div>
         )}
-        
+
         {!isLoadingAccounts && viewedAccounts.length === 0 && (
           <div className="flex justify-center items-center py-8 h-[60vh]">
             <p className="text-gray-300">
@@ -145,7 +145,7 @@ export const WalletViewer = () => {
         )}
 
         {viewStatus && (
-          <p className="text-sm text-gray-300 wrap-break-word">{viewStatus}</p>
+          <p className="text-sm text-gray-300 wrap-anywhere">{viewStatus}</p>
         )}
         {error && <p className="text-sm text-red-400">{error}</p>}
       </div>

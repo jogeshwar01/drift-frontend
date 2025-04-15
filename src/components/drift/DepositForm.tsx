@@ -201,7 +201,7 @@ export const DepositForm = () => {
 
       {depositStatus && (
         <div
-          className={`mt-4 p-3 rounded-lg wrap-break-word ${
+          className={`mt-4 p-3 rounded-lg wrap-anywhere ${
             depositStatus.includes("Error")
               ? "bg-red-900/30 border border-red-700 text-red-400"
               : "bg-green-900/30 border border-green-700 text-green-400"

@@ -3,8 +3,31 @@ import { OrderForm } from "./trade/OrderForm";
 import { OrdersHistory } from "./trade/OrdersHistory";
 import { DriftPriceChart } from "./DriftPriceChart";
 import { OrderIcon } from "@/components/icons";
+import { useState, useEffect } from "react";
+import { useDriftStore } from "@/store/driftStore";
 
 export const PerpOrderForm = () => {
+  const userAccounts = useDriftStore((state) => state.userAccounts);
+  const driftClient = useDriftStore((state) => state.driftClient);
+  const [selectedSubAccountId, setSelectedSubAccountId] = useState<number>(0);
+
+  const switchAccount = async (subAccountId: number) => {
+    try {
+      await driftClient?.switchActiveUser(subAccountId);
+      setSelectedSubAccountId(subAccountId);
+    } catch (error) {
+      console.error("Error switching account:", error);
+    }
+  };
+
+  // Set first account as default when accounts are loaded
+  useEffect(() => {
+    if (userAccounts.length > 0) {
+      const defaultAccountId = userAccounts[0].subAccountId;
+      setSelectedSubAccountId(defaultAccountId);
+    }
+  }, [userAccounts, driftClient]);
+
   return (
     <div className="bg-gray-800 rounded-lg p-6 shadow-lg border border-gray-700">
       <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
@@ -21,11 +44,17 @@ export const PerpOrderForm = () => {
             />
           </div>
 
-          <OrderForm />
+          <OrderForm
+            selectedSubAccountId={selectedSubAccountId}
+            onSubAccountChange={switchAccount}
+          />
         </div>
 
         <div className="w-full">
-          <OrdersHistory />
+          <OrdersHistory
+            selectedSubAccountId={selectedSubAccountId}
+            onSubAccountChange={switchAccount}
+          />
         </div>
       </div>
     </div>

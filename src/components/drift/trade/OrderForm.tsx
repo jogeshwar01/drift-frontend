@@ -26,8 +26,17 @@ import {
   ErrorIcon,
 } from "@/components/icons";
 import Image from "next/image";
+import { SubAccountSelector } from "./SubAccountSelector";
 
-export const OrderForm = () => {
+interface OrderFormProps {
+  selectedSubAccountId: number;
+  onSubAccountChange: (subAccountId: number) => void;
+}
+
+export const OrderForm = ({
+  selectedSubAccountId,
+  onSubAccountChange,
+}: OrderFormProps) => {
   const driftClient = useDriftStore((state) => state.driftClient);
   const { publicKey, signTransaction } = useWallet();
   const fetchUserAccounts = useDriftStore((state) => state.fetchUserAccounts);
@@ -35,7 +44,6 @@ export const OrderForm = () => {
   const isLoading = useDriftStore((state) => state.isLoading);
 
   const [orderStatus, setOrderStatus] = useState<string>("");
-  const [selectedSubAccountId, setSelectedSubAccountId] = useState<number>(0);
   const [orderType, setOrderType] = useState<OrderType>(OrderType.LIMIT);
   const [marketIndex, setMarketIndex] = useState<number>(0);
   const [direction, setDirection] = useState<PositionDirection>(
@@ -50,27 +58,6 @@ export const OrderForm = () => {
       fetchUserAccounts(publicKey);
     }
   }, [publicKey, fetchUserAccounts]);
-
-  // Set first account as default when accounts are loaded
-  useEffect(() => {
-    if (userAccounts.length > 0 && !selectedSubAccountId) {
-      setSelectedSubAccountId(userAccounts[0].subAccountId);
-    }
-  }, [userAccounts, selectedSubAccountId]);
-
-  const handleAccountSwitch = async (accountId: number) => {
-    try {
-      await driftClient?.switchActiveUser(accountId);
-      setSelectedSubAccountId(accountId);
-    } catch (error) {
-      console.error("Error switching account:", error);
-      setOrderStatus(
-        `Error switching account: ${
-          error instanceof Error ? error.message : String(error)
-        }`
-      );
-    }
-  };
 
   const handlePlaceOrder = async () => {
     if (!driftClient || !publicKey || !signTransaction) {
@@ -99,7 +86,7 @@ export const OrderForm = () => {
         baseAssetAmount: amount,
       };
 
-      if (orderType == OrderType.LIMIT) {
+      if (JSON.stringify(orderType) === JSON.stringify(OrderType.LIMIT)) {
         orderParams.price = driftClient.convertToPricePrecision(
           parseFloat(price)
         );
@@ -162,55 +149,25 @@ export const OrderForm = () => {
 
   return (
     <div className="w-full md:w-2/5 space-y-6">
-      <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">
-          Select Account
-        </label>
-        <div className="flex space-x-2">
-          {userAccounts.map((account) => (
-            <button
-              key={account.subAccountId}
-              onClick={() => handleAccountSwitch(account.subAccountId)}
-              className={`flex-1 py-2 px-3 rounded-lg font-medium transition-colors ${
-                selectedSubAccountId === account.subAccountId
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-              }`}
-            >
-              {account.name
-                ? new TextDecoder().decode(new Uint8Array(account.name))
-                : `Account ${account.subAccountId}`}
-            </button>
-          ))}
-        </div>
-      </div>
+      <SubAccountSelector
+        selectedSubAccountId={selectedSubAccountId}
+        onSubAccountChange={onSubAccountChange}
+      />
 
       <div>
         <label className="block text-sm font-medium text-gray-300 mb-2">
           Order Type
         </label>
-        <div className="flex space-x-2">
-          <button
-            onClick={() => setOrderType(OrderType.LIMIT)}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
-              orderType === OrderType.LIMIT
-                ? "bg-blue-600 text-white"
-                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-            }`}
-          >
-            Limit
-          </button>
-          <button
-            onClick={() => setOrderType(OrderType.MARKET)}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
-              orderType === OrderType.MARKET
-                ? "bg-blue-600 text-white"
-                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-            }`}
-          >
-            Market
-          </button>
-        </div>
+        <select
+          value={JSON.stringify(orderType)}
+          onChange={(e) =>
+            setOrderType(JSON.parse(e.target.value) as OrderType)
+          }
+          className="w-full bg-gray-700 text-white rounded-lg p-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+        >
+          <option value={JSON.stringify(OrderType.LIMIT)}>Limit</option>
+          <option value={JSON.stringify(OrderType.MARKET)}>Market</option>
+        </select>
       </div>
 
       <div>
@@ -226,7 +183,10 @@ export const OrderForm = () => {
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
             }`}
           >
-            Long
+            <div className="flex items-center justify-center">
+              <LongIcon className="w-4 h-4 mr-2" />
+              Long
+            </div>
           </button>
           <button
             onClick={() => setDirection(PositionDirection.SHORT)}
@@ -236,7 +196,10 @@ export const OrderForm = () => {
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
             }`}
           >
-            Short
+            <div className="flex items-center justify-center">
+              <ShortIcon className="w-4 h-4 mr-2" />
+              Short
+            </div>
           </button>
         </div>
       </div>
@@ -303,29 +266,39 @@ export const OrderForm = () => {
         </div>
       </div>
 
-      {orderType === OrderType.LIMIT && (
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            Price
-          </label>
-          <div className="relative">
-            <input
-              type="number"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-              min="0"
-              step="0.1"
-            />
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <CurrencyIcon className="w-5 h-5 text-gray-400" />
-            </div>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <span className="text-gray-400">USD</span>
-            </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-2">
+          Price
+        </label>
+        <div className="relative">
+          <input
+            type="number"
+            value={
+              JSON.stringify(orderType) !== JSON.stringify(OrderType.MARKET)
+                ? price
+                : ""
+            }
+            onChange={(e) => setPrice(e.target.value)}
+            placeholder={
+              JSON.stringify(orderType) === JSON.stringify(OrderType.MARKET)
+                ? "Market Price"
+                : ""
+            }
+            disabled={
+              JSON.stringify(orderType) === JSON.stringify(OrderType.MARKET)
+            }
+            className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors disabled:bg-gray-600 disabled:text-gray-400"
+            min="0"
+            step="0.1"
+          />
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <CurrencyIcon className="w-5 h-5 text-gray-400" />
+          </div>
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <span className="text-gray-400">USD</span>
           </div>
         </div>
-      )}
+      </div>
 
       <button
         onClick={handlePlaceOrder}
@@ -358,7 +331,7 @@ export const OrderForm = () => {
 
       {orderStatus && (
         <div
-          className={`mt-4 p-4 rounded-lg flex items-start wrap-break-word ${
+          className={`mt-4 p-4 rounded-lg flex items-start wrap-anywhere max-w-full ${
             orderStatus.includes("Error")
               ? "bg-red-900/30 border border-red-700 text-red-400"
               : orderStatus.includes("successful")

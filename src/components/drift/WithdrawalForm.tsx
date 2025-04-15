@@ -158,7 +158,10 @@ export const WithdrawalForm = () => {
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputAmount = e.target.value;
     // Only allow setting amount if it's not greater than available balance
-    if (inputAmount === "" || parseFloat(inputAmount) <= parseFloat(availableBalance)) {
+    if (
+      inputAmount === "" ||
+      parseFloat(inputAmount) <= parseFloat(availableBalance)
+    ) {
       setAmount(inputAmount);
     }
   };
@@ -251,7 +254,13 @@ export const WithdrawalForm = () => {
 
           <button
             onClick={handleWithdraw}
-            disabled={isProcessing || !publicKey || isLoadingAccounts || parseFloat(amount) <= 0 || parseFloat(amount) > parseFloat(availableBalance)}
+            disabled={
+              isProcessing ||
+              !publicKey ||
+              isLoadingAccounts ||
+              parseFloat(amount) <= 0 ||
+              parseFloat(amount) > parseFloat(availableBalance)
+            }
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition-colors duration-200 disabled:bg-gray-600 disabled:cursor-not-allowed"
           >
             {isProcessing ? "Processing..." : "Withdraw"}
@@ -261,7 +270,7 @@ export const WithdrawalForm = () => {
 
       {withdrawalStatus && (
         <div
-          className={`mt-4 p-3 rounded-lg wrap-break-word ${
+          className={`mt-4 p-3 rounded-lg wrap-anywhere ${
             withdrawalStatus.includes("Error")
               ? "bg-red-900/30 border border-red-700 text-red-400"
               : "bg-green-900/30 border border-green-700 text-green-400"

@@ -7,49 +7,73 @@ import {
   ShortIcon,
   LoadingIcon,
   ErrorIcon,
+  RefreshIcon,
 } from "@/components/icons";
 import { Order, OrderType, PositionDirection } from "@drift-labs/sdk";
+import { SubAccountSelector } from "./SubAccountSelector";
+import { useWallet } from "@solana/wallet-adapter-react";
 
-const selectedSubAccountId = 0;
+interface OrdersHistoryProps {
+  selectedSubAccountId: number;
+  onSubAccountChange: (subAccountId: number) => void;
+}
 
-export const OrdersHistory = () => {
+export const OrdersHistory = ({
+  selectedSubAccountId,
+  onSubAccountChange,
+}: OrdersHistoryProps) => {
   const userAccounts = useDriftStore((state) => state.userAccounts);
+  const fetchUserAccounts = useDriftStore((state) => state.fetchUserAccounts);
+  const { publicKey } = useWallet();
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const fetchOrders = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const account = userAccounts.find(
+        (acc) => acc.subAccountId === selectedSubAccountId
+      );
+      if (!account) {
+        setError("Account not found");
+        return;
+      }
+      // Filter for open orders
+      const openOrders = account.orders.filter(
+        (order) =>
+          order.slot &&
+          (order.slot.words?.[0] !== 0 ||
+            order.slot.words?.[1] !== 0 ||
+            order.slot.words?.[2] !== 0)
+      );
+
+      setOrders(openOrders);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch orders");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const account = userAccounts.find(
-          (acc) => acc.subAccountId === selectedSubAccountId
-        );
-        console.log(account);
-        if (!account) {
-          setError("Account not found");
-          return;
-        }
-        // Filter for open orders
-        const openOrders = account.orders.filter(
-          (order) =>
-            order.slot &&
-            (order.slot.words?.[0] !== 0 ||
-              order.slot.words?.[1] !== 0 ||
-              order.slot.words?.[2] !== 0)
-        );
-
-        setOrders(openOrders);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to fetch orders");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchOrders();
-  }, [userAccounts]);
+  }, [userAccounts, selectedSubAccountId]);
+
+  const handleRefreshOrders = async () => {
+    if (!publicKey || isRefreshing) return;
+    
+    setIsRefreshing(true);
+    try {
+      await fetchUserAccounts(publicKey);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to refresh orders");
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const formatAmount = (amount: string) => {
     return (parseInt(amount, 16) / 1e9).toFixed(5);
@@ -83,6 +107,24 @@ export const OrdersHistory = () => {
 
   return (
     <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+      <div className="mb-4">
+        <div className="flex justify-between items-center">
+          <div className="w-1/2">
+            <SubAccountSelector
+              selectedSubAccountId={selectedSubAccountId}
+              onSubAccountChange={onSubAccountChange}
+            />
+          </div>
+          <button
+            onClick={handleRefreshOrders}
+            disabled={isRefreshing || !publicKey}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center ml-4"
+          >
+            <RefreshIcon className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+            {isRefreshing ? 'Refreshing...' : 'Refresh Orders'}
+          </button>
+        </div>
+      </div>
       <h3 className="text-lg font-semibold text-white mb-4">Orders History</h3>
       {orders.length === 0 ? (
         <div className="text-gray-400 text-center py-4">No orders history</div>

@@ -121,9 +121,7 @@ export function UserAccountManager() {
   return (
     <div className="mt-8 p-4 border border-gray-700 rounded-lg bg-gray-800 shadow">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-white">
-          Account
-        </h2>
+        <h2 className="text-xl font-semibold text-white">Account</h2>
         <div className="flex space-x-4">
           <button
             onClick={() => setShowCreateModal(true)}
@@ -235,7 +233,7 @@ export function UserAccountManager() {
               </button>
             </div>
             {status && (
-              <p className="mt-4 text-sm text-gray-300 wrap-break-word">
+              <p className="mt-4 text-sm text-gray-300 wrap-anywhere">
                 {status}
               </p>
             )}
