@@ -4,6 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-primary-gradient: var(--primary-gradient);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -44,42 +45,8 @@
 }
 
 :root {
+  --primary-gradient: linear-gradient(90deg, #e8a2a0 0%, #9468f1 50%, #71cce9 100%);
   --radius: 0.4rem;
-  --background: hsl(0 0% 100%);
-  --foreground: hsl(240 10% 3.9%);
-  --card: hsl(0 0% 100%);
-  --card-foreground: hsl(240 10% 3.9%);
-  --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(240 10% 3.9%);
-  --primary: hsl(240 5.9% 10%);
-  --primary-foreground: hsl(0 0% 98%);
-  --secondary: hsl(240 4.8% 95.9%);
-  --secondary-foreground: hsl(240 5.9% 10%);
-  --muted: hsl(240 4.8% 95.9%);
-  --muted-foreground: hsl(240 3.8% 46.1%);
-  --accent: hsl(240 4.8% 95.9%);
-  --accent-foreground: hsl(240 5.9% 10%);
-  --destructive: hsl(0 84.2% 60.2%);
-  --destructive-foreground: hsl(0 0% 98%);
-  --border: hsl(240 5.9% 90%);
-  --input: hsl(240 5.9% 90%);
-  --ring: hsl(240 5.9% 10%);
-  --chart-1: hsl(12 76% 61%);
-  --chart-2: hsl(173 58% 39%);
-  --chart-3: hsl(197 37% 24%);
-  --chart-4: hsl(43 74% 66%);
-  --chart-5: hsl(27 87% 67%);
-  --sidebar: hsl(0 0% 98%);
-  --sidebar-foreground: hsl(240 5.3% 26.1%);
-  --sidebar-primary: hsl(240 5.9% 10%);
-  --sidebar-primary-foreground: hsl(0 0% 98%);
-  --sidebar-accent: hsl(240 4.8% 95.9%);
-  --sidebar-accent-foreground: hsl(240 5.9% 10%);
-  --sidebar-border: hsl(220 13% 91%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
-}
-
-.dark {
   --background: hsl(240 10% 3.9%);
   --foreground: hsl(0 0% 98%);
   --card: hsl(240 10% 3.9%);
@@ -121,4 +88,57 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* solana wallet adaptor custom styles */
+.wallet-adapter-button {
+  height: 35px !important;
+  color: white !important;
+  background-color: rgb(39, 38, 38) !important;
+  border: 1px;
+}
+
+.wallet-adapter-button:hover {
+  background-color: rgb(70, 70, 70) !important;
+}
+
+.wallet-adapter-modal-title {
+  background-color: rgb(39, 38, 38) !important;
+  border-radius: 10px !important;
+  color: white !important;
+}
+
+.wallet-adapter-modal-wrapper {
+  background-color: rgb(39, 38, 38) !important;
+  padding-bottom: 20px;
+}
+
+.wallet-adapter-modal-button-close {
+  background-color: rgb(39, 38, 38) !important;
+}
+
+.wallet-adapter-dropdown-list {
+  background-color: rgb(39, 38, 38) !important;
+}
+
+.wallet-adapter-dropdown-list-item {
+  color: white !important;
+}
+
+.wallet-adapter-dropdown-list-item:hover {
+  color: white !important;
+  background-color: rgb(12, 12, 12) !important;
+}
+
+/* Implement a custom scrollbar to preventing ugly looking scroll-overflows */
+::-webkit-scrollbar {
+  background-color: #222;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #444;
 }

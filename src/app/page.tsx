@@ -7,6 +7,7 @@ import { WithdrawalForm } from "@/components/drift/WithdrawalForm";
 import { PerpOrderForm } from "@/components/drift/PerpOrderForm";
 import { WalletViewer } from "@/components/drift/WalletViewer";
 import { useWallet } from "@solana/wallet-adapter-react";
+import Image from "next/image";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("create-account");
@@ -21,11 +22,11 @@ export default function Home() {
   ];
 
   return (
-    <div className="font-[family-name:var(--font-geist-sans)] min-h-screen bg-gray-900 pb-8">
+    <div className="font-[family-name:var(--font-geist-sans)] min-h-screen bg-background pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4 border-b border-gray-700">
-          <h1 className="text-2xl font-bold text-white">Drift</h1>
-          
+        <div className="flex justify-between items-center pt-4 border-muted">
+          <Image src="/drift-logo.svg" alt="Drift" width={100} height={100} />
+
           {publicKey && (
             <div className="flex space-x-4">
               {tabs.map((tab) => (
@@ -33,11 +34,11 @@ export default function Home() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`
-                    py-2 px-3 rounded-md font-medium text-sm cursor-pointer transition-all duration-200
+                    py-2 px-3 rounded-full font-medium text-sm cursor-pointer
                     ${
                       activeTab === tab.id
-                        ? "bg-blue-600 text-white"
-                        : "text-gray-400 hover:text-gray-300 hover:bg-gray-800"
+                        ? "bg-[image:var(--color-primary-gradient)] text-muted"
+                        : "text-gray-400 hover:text-gray-300 hover:bg-muted/25"
                     }
                   `}
                 >
@@ -46,22 +47,20 @@ export default function Home() {
               ))}
             </div>
           )}
-          
+
           <WalletMultiButtonDynamic />
         </div>
 
         {publicKey ? (
           <div className="mt-4">
-            <div className="mt-4">
-              {activeTab === "create-account" && <UserAccountManager />}
-              {activeTab === "deposit" && <DepositForm />}
-              {activeTab === "withdraw" && <WithdrawalForm />}
-              {activeTab === "trade" && <PerpOrderForm />}
-              {activeTab === "wallet-data" && <WalletViewer />}
-            </div>
+            {activeTab === "create-account" && <UserAccountManager />}
+            {activeTab === "deposit" && <DepositForm />}
+            {activeTab === "withdraw" && <WithdrawalForm />}
+            {activeTab === "trade" && <PerpOrderForm />}
+            {activeTab === "wallet-data" && <WalletViewer />}
           </div>
         ) : (
-          <div className="mt-8 p-8 flex items-center flex-col gap-6 justify-center border h-[80vh] border-gray-700 rounded-lg bg-gray-800 shadow">
+          <div className="mt-8 p-8 flex items-center flex-col gap-6 justify-center border h-[80vh] border-muted rounded-lg bg-background shadow">
             <p className="text-xl text-gray-300">
               Please connect your wallet to access Drift.
             </p>
