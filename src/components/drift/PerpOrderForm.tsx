@@ -4,8 +4,6 @@ import { OrdersHistory } from "./trade/OrdersHistory";
 import { DriftPriceChart } from "./DriftPriceChart";
 import { useState, useEffect } from "react";
 import { useDriftStore } from "@/store/driftStore";
-import { MARKET_ICONS, PLACEHOLDER_ICON } from "@/config/constants";
-import Image from "next/image";
 import { SubAccountSelector } from "./trade/SubAccountSelector";
 
 export const PerpOrderForm = () => {
@@ -31,23 +29,10 @@ export const PerpOrderForm = () => {
   }, [userAccounts, driftClient]);
 
   return (
-    <div className="bg-gray-800 rounded-lg p-6 shadow-lg border border-gray-700">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-white flex items-center">
-          <Image
-            src={
-              MARKET_ICONS["SOL" as keyof typeof MARKET_ICONS] ||
-              PLACEHOLDER_ICON
-            }
-            alt={"SOL" as keyof typeof MARKET_ICONS}
-            className="w-8 h-8"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = PLACEHOLDER_ICON;
-            }}
-            width={20}
-            height={20}
-          />
-          <div className="ml-4 text-2xl">SOL-PERP</div>
+    <div className="bg-background border border- h-full rounded-lg p-4 shadow-lg">
+      <div className="flex items-start justify-between mb-6">
+        <h2 className="text-xl font-semibold text-transparent bg-[image:var(--color-primary-gradient)] bg-clip-text">
+          Trade SOL-PERP
         </h2>
 
         <div className="flex items-center gap-2 w-2/5 px-2">

@@ -2,13 +2,15 @@
 import { useDriftStore } from "@/store/driftStore";
 import { useEffect, useState } from "react";
 import { MARKET_NAMES } from "@/config/constants";
+import { LoadingIcon } from "@/components/icons";
+
 import {
-  LongIcon,
-  ShortIcon,
-  LoadingIcon,
-  ErrorIcon,
-  RefreshIcon,
-} from "@/components/icons";
+  Refresh as RefreshIcon,
+  TrendingUp as LongIcon,
+  TrendingDown as ShortIcon,
+  Error as ErrorIcon,
+} from "@mui/icons-material";
+
 import { Order, OrderType, PositionDirection } from "@drift-labs/sdk";
 import { SubAccountSelector } from "./SubAccountSelector";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -85,7 +87,7 @@ export const OrdersHistory = ({
 
   if (isLoading) {
     return (
-      <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+      <div className="bg-background border border-muted rounded-lg p-4">
         <div className="flex items-center justify-center p-4">
           <LoadingIcon className="w-6 h-6 text-blue-400" />
           <span className="ml-2 text-gray-300">Loading orders...</span>
@@ -96,7 +98,7 @@ export const OrdersHistory = ({
 
   if (error) {
     return (
-      <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+      <div className="bg-background border border-muted rounded-lg p-4">
         <div className="flex items-center p-4 text-red-400">
           <ErrorIcon className="w-6 h-6" />
           <span className="ml-2">{error}</span>
@@ -106,33 +108,33 @@ export const OrdersHistory = ({
   }
 
   return (
-    <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-      <div className="mb-4">
-        <div className="flex justify-between items-center">
-          <div className="w-1/2">
-            <SubAccountSelector
-              selectedSubAccountId={selectedSubAccountId}
-              onSubAccountChange={onSubAccountChange}
-            />
-          </div>
-          <button
-            onClick={handleRefreshOrders}
-            disabled={isRefreshing || !publicKey}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center ml-4"
-          >
-            <RefreshIcon
-              className={`w-4 h-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`}
-            />
-            {isRefreshing ? "Refreshing..." : "Refresh Orders"}
-          </button>
+    <div className="bg-background border-t border-muted rounded-none p-4 mt-4">
+      <div className="flex justify-between items-end mt-4">
+        <div className="w-1/2">
+          <SubAccountSelector
+            selectedSubAccountId={selectedSubAccountId}
+            onSubAccountChange={onSubAccountChange}
+          />
         </div>
+        <button
+          onClick={handleRefreshOrders}
+          disabled={isRefreshing || !publicKey}
+          className="bg-muted hover:bg-chart-4 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center ml-4"
+        >
+          <RefreshIcon
+            className={`w-4 h-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`}
+          />
+          {isRefreshing ? "Refreshing..." : "Refresh Orders"}
+        </button>
       </div>
-      <h3 className="text-lg font-semibold text-white mb-4">Orders History</h3>
+      <h3 className="text-lg mt-8 font-semibold text-transparent bg-[image:var(--color-primary-gradient)] bg-clip-text mb-4">
+        Orders History
+      </h3>
       {orders.length === 0 ? (
         <div className="text-gray-400 text-center py-4">No orders history</div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-700">
+          <table className="min-w-full divide-y divide-muted">
             <thead>
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
@@ -155,10 +157,10 @@ export const OrdersHistory = ({
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-gray-700 divide-y divide-gray-600">
+            <tbody className="divide-y divide-muted">
               {orders.map((order) => (
-                <tr key={order.orderId}>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-white">
+                <tr key={order.orderId} className="odd:bg-muted/25">
+                  <td className="px-4 py-4 whitespace-nowrap text-sm text-white">
                     {
                       MARKET_NAMES[
                         order.marketIndex as keyof typeof MARKET_NAMES

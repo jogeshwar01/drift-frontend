@@ -52,7 +52,7 @@ export default function Home() {
         </div>
 
         {publicKey ? (
-          <div className="mt-4">
+          <div className="mt-8">
             {activeTab === "create-account" && <UserAccountManager />}
             {activeTab === "deposit" && <DepositForm />}
             {activeTab === "withdraw" && <WithdrawalForm />}

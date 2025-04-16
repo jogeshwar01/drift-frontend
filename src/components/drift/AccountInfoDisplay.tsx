@@ -107,8 +107,11 @@ export const AccountInfoDisplay = ({ account }: AccountInfoDisplayProps) => {
     <div className="space-y-6">
       <div className="space-y-6">
         <div>
-          <h4 className="font-medium text-white">Account Information</h4>
-          <div className="mt-2 space-y-2">
+          <h4 className="font-medium pb-2 text-lg text-white">
+            Account Information
+          </h4>
+          <hr />
+          <div className="mt-4 space-y-2">
             <p className="text-gray-300">
               <span className="font-medium">Sub Account ID:</span>{" "}
               {account.subAccountId}
@@ -127,15 +130,22 @@ export const AccountInfoDisplay = ({ account }: AccountInfoDisplayProps) => {
         </div>
 
         <div>
-          <h4 className="font-medium text-white">Token Balances</h4>
+          <h4 className="font-medium pb-2 text-lg text-white">
+            Token Balances
+          </h4>
+          <hr />
           <div className="mt-2">
             <div
-              className="max-h-[400px] overflow-y-auto scrollbar-hide"
-              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              className="max-h-[600px] overflow-y-auto relative"
+              style={{
+                scrollbarWidth: "thin",
+                msOverflowStyle: "none",
+                scrollbarColor: "var(--muted) var(--background)",
+              }}
             >
               <table className="w-full">
-                <thead className="sticky top-0">
-                  <tr className="border-b border-gray-700">
+                <thead className="sticky top-0 bg-background z-10">
+                  <tr className="border-b border-muted">
                     <th className="py-2 px-4 text-left text-gray-300">Token</th>
                     <th className="py-2 px-4 text-left text-gray-300">Mint</th>
                     <th className="py-2 px-4 text-left text-gray-300">
@@ -144,12 +154,12 @@ export const AccountInfoDisplay = ({ account }: AccountInfoDisplayProps) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedMarkets.map((market, index) => (
+                  {sortedMarkets.map((market) => (
                     <tr
                       key={`market-${market.marketIndex}`}
-                      className="border-b border-gray-700 odd:bg-gray-900/50"
+                      className="border-b border-muted odd:bg-muted/25"
                     >
-                      <td className="py-2 px-4">
+                      <td className="py-4 px-4">
                         <div className="flex items-center space-x-2">
                           <Image
                             src={`${DRIFT_ICON_URL}${market.symbol}.svg`}

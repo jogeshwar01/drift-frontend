@@ -9,35 +9,32 @@ import {
   MarketType,
   OrderTriggerCondition,
 } from "@drift-labs/sdk";
+import { MARKET_SYMBOLS, MARKET_NAMES } from "@/config/constants";
+import { LoadingIcon } from "@/components/icons";
+
 import {
-  MARKET_SYMBOLS,
-  MARKET_NAMES,
-} from "@/config/constants";
-import {
-  WarningIcon,
-  RefreshIcon,
-  ChartIcon,
-  CurrencyIcon,
-  LongIcon,
-  ShortIcon,
-  LoadingIcon,
-  SuccessIcon,
-  ErrorIcon,
-} from "@/components/icons";
+  Warning as WarningIcon,
+  Refresh as RefreshIcon,
+  ShowChart as ChartIcon,
+  AttachMoney as CurrencyIcon,
+  TrendingUp as LongIcon,
+  TrendingDown as ShortIcon,
+  CheckCircle as SuccessIcon,
+  Error as ErrorIcon,
+} from "@mui/icons-material";
+import { RefreshAccountsScreen } from "@/components/common/RefreshAccountsScreen";
 
 interface OrderFormProps {
   selectedSubAccountId: number;
 }
 
-export const OrderForm = ({
-  selectedSubAccountId,
-}: OrderFormProps) => {
+export const OrderForm = ({ selectedSubAccountId }: OrderFormProps) => {
   const driftClient = useDriftStore((state) => state.driftClient);
   const { publicKey, signTransaction } = useWallet();
   const fetchUserAccounts = useDriftStore((state) => state.fetchUserAccounts);
   const userAccounts = useDriftStore((state) => state.userAccounts);
   const isLoading = useDriftStore((state) => state.isLoading);
-
+  const [isLoadingAccounts, setIsLoadingAccounts] = useState<boolean>(false);
   const [orderStatus, setOrderStatus] = useState<string>("");
   const [orderType, setOrderType] = useState<OrderType>(OrderType.LIMIT);
   const [marketIndex, setMarketIndex] = useState<number>(0);
@@ -141,7 +138,7 @@ export const OrderForm = ({
         const amount = driftClient.convertToPerpPrecision(
           parseFloat(baseAssetAmount)
         );
-        
+
         // Create order parameters
         const orderParams: OptionalOrderParams = {
           orderType,
@@ -152,31 +149,37 @@ export const OrderForm = ({
         };
 
         // Add price for limit orders
-        if (orderVariant === "limit" || orderVariant === "takeProfit" || orderVariant === "stopLimit") {
+        if (
+          orderVariant === "limit" ||
+          orderVariant === "takeProfit" ||
+          orderVariant === "stopLimit"
+        ) {
           orderParams.price = driftClient.convertToPricePrecision(
             parseFloat(price)
           );
         }
-        
+
         // Add trigger price and condition for trigger orders (take profit and stop limit)
         if (orderVariant === "takeProfit" || orderVariant === "stopLimit") {
           orderParams.triggerPrice = driftClient.convertToPricePrecision(
             parseFloat(triggerPrice)
           );
-          
+
           // Set trigger condition based on order variant and direction
           // Take Profit: Executes when price moves favorably (above entry for longs, below entry for shorts)
           // Stop Limit: Executes when price moves unfavorably (below entry for longs, above entry for shorts)
           if (orderVariant === "takeProfit") {
             // Take profit conditions
-            orderParams.triggerCondition = direction === PositionDirection.LONG
-              ? OrderTriggerCondition.ABOVE  // For long positions, trigger when price goes above the trigger price
-              : OrderTriggerCondition.BELOW; // For short positions, trigger when price goes below the trigger price
+            orderParams.triggerCondition =
+              direction === PositionDirection.LONG
+                ? OrderTriggerCondition.ABOVE // For long positions, trigger when price goes above the trigger price
+                : OrderTriggerCondition.BELOW; // For short positions, trigger when price goes below the trigger price
           } else {
             // Stop limit conditions
-            orderParams.triggerCondition = direction === PositionDirection.LONG
-              ? OrderTriggerCondition.BELOW  // For long positions, trigger when price goes below the trigger price
-              : OrderTriggerCondition.ABOVE; // For short positions, trigger when price goes above the trigger price
+            orderParams.triggerCondition =
+              direction === PositionDirection.LONG
+                ? OrderTriggerCondition.BELOW // For long positions, trigger when price goes below the trigger price
+                : OrderTriggerCondition.ABOVE; // For short positions, trigger when price goes above the trigger price
           }
         }
 
@@ -219,20 +222,10 @@ export const OrderForm = ({
 
   if (userAccounts.length === 0) {
     return (
-      <div className="mb-4 p-4 bg-red-900/30 border border-red-700 rounded-lg">
-        <p className="text-red-400 flex items-center">
-          <WarningIcon className="w-5 h-5 mr-2" />
-          You need to create a user account first before placing orders.
-        </p>
-        <button
-          onClick={() => fetchUserAccounts(publicKey)}
-          disabled={isLoading || !publicKey}
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg mt-3 transition-colors duration-200 flex items-center"
-        >
-          <RefreshIcon className="w-4 h-4 mr-2" />
-          Refresh Accounts
-        </button>
-      </div>
+      <RefreshAccountsScreen
+        isLoadingAccounts={isLoadingAccounts}
+        setIsLoadingAccounts={setIsLoadingAccounts}
+      />
     );
   }
 
@@ -245,10 +238,11 @@ export const OrderForm = ({
         <div className="flex space-x-2">
           <button
             onClick={() => setDirection(PositionDirection.LONG)}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
-              JSON.stringify(direction) === JSON.stringify(PositionDirection.LONG)
-                ? "bg-green-600 text-white"
-                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors cursor-pointer ${
+              JSON.stringify(direction) ===
+              JSON.stringify(PositionDirection.LONG)
+                ? "bg-chart-2 hover:bg-chart-2/50 text-white"
+                : "bg-background text-chart-2 hover:bg-chart-2/50 border border-muted"
             }`}
           >
             <div className="flex items-center justify-center">
@@ -258,10 +252,11 @@ export const OrderForm = ({
           </button>
           <button
             onClick={() => setDirection(PositionDirection.SHORT)}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
-              JSON.stringify(direction) === JSON.stringify(PositionDirection.SHORT)
-                ? "bg-red-600 text-white"
-                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors cursor-pointer ${
+              JSON.stringify(direction) ===
+              JSON.stringify(PositionDirection.SHORT)
+                ? "bg-destructive hover:bg-destructive/50 text-white"
+                : "bg-background text-destructive hover:bg-destructive/50 border border-muted"
             }`}
           >
             <div className="flex items-center justify-center">
@@ -285,7 +280,7 @@ export const OrderForm = ({
             } else {
               setIsScaleOrder(false);
               setOrderVariant(value);
-              
+
               // Set the appropriate OrderType based on the variant
               if (value === "market") {
                 setOrderType(OrderType.MARKET);
@@ -296,7 +291,7 @@ export const OrderForm = ({
               }
             }
           }}
-          className="w-full bg-gray-700 text-white rounded-lg p-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+          className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors"
         >
           <option value="limit">Limit</option>
           <option value="market">Market</option>
@@ -315,7 +310,7 @@ export const OrderForm = ({
             type="number"
             value={baseAssetAmount}
             onChange={(e) => setBaseAssetAmount(e.target.value)}
-            className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+            className="w-full bg-background text-white rounded-lg p-3 pl-10 border border-muted focus:outline-none transition-colors"
             min="0"
             step="0.1"
           />
@@ -342,7 +337,7 @@ export const OrderForm = ({
                   type="number"
                   value={startPrice}
                   onChange={(e) => setStartPrice(e.target.value)}
-                  className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  className="w-full bg-background text-white rounded-lg p-3 pl-10 border border-muted focus:outline-none transition-colors"
                   min="0"
                   step="0.1"
                 />
@@ -364,7 +359,7 @@ export const OrderForm = ({
                   type="number"
                   value={endPrice}
                   onChange={(e) => setEndPrice(e.target.value)}
-                  className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  className="w-full bg-background text-white rounded-lg p-3 pl-10 border border-muted focus:outline-none transition-colors"
                   min="0"
                   step="0.1"
                 />
@@ -387,7 +382,7 @@ export const OrderForm = ({
                 type="number"
                 value={orderCount}
                 onChange={(e) => setOrderCount(e.target.value)}
-                className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                className="w-full bg-background text-white rounded-lg p-3 pl-10 border border-muted focus:outline-none transition-colors"
                 min="2"
                 step="1"
               />
@@ -410,7 +405,7 @@ export const OrderForm = ({
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder={orderVariant === "market" ? "Market Price" : ""}
                 disabled={orderVariant === "market"}
-                className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors disabled:bg-gray-600 disabled:text-gray-400"
+                className="w-full bg-background text-white rounded-lg p-3 pl-10 border border-muted focus:outline-none transition-colors disabled:bg-muted/50 disabled:text-gray-400"
                 min="0"
                 step="0.1"
               />
@@ -427,16 +422,20 @@ export const OrderForm = ({
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Trigger Price
-                {orderVariant === "takeProfit" ? 
-                  ` (${direction === PositionDirection.LONG ? "Above" : "Below"} this price)` : 
-                  ` (${direction === PositionDirection.LONG ? "Below" : "Above"} this price)`}
+                {orderVariant === "takeProfit"
+                  ? ` (${
+                      direction === PositionDirection.LONG ? "Above" : "Below"
+                    } this price)`
+                  : ` (${
+                      direction === PositionDirection.LONG ? "Below" : "Above"
+                    } this price)`}
               </label>
               <div className="relative">
                 <input
                   type="number"
                   value={triggerPrice}
                   onChange={(e) => setTriggerPrice(e.target.value)}
-                  className="w-full bg-gray-700 text-white rounded-lg p-3 pl-10 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  className="w-full bg-background text-white rounded-lg p-3 pl-10 border border-muted focus:outline-none transition-colors"
                   min="0"
                   step="0.1"
                 />
@@ -455,10 +454,10 @@ export const OrderForm = ({
       <button
         onClick={handlePlaceOrder}
         disabled={isProcessing || !publicKey}
-        className={`w-full py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center ${
+        className={`w-full py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center cursor-pointer ${
           JSON.stringify(direction) === JSON.stringify(PositionDirection.LONG)
-            ? "bg-green-600 hover:bg-green-700 disabled:bg-gray-600"
-            : "bg-red-600 hover:bg-red-700 disabled:bg-gray-600"
+            ? "bg-chart-2 hover:bg-chart-2/50 disabled:bg-chart-2/50"
+            : "bg-destructive hover:bg-destructive/50 disabled:bg-destructive/50"
         } text-white disabled:cursor-not-allowed`}
       >
         {isProcessing ? (
@@ -468,14 +467,16 @@ export const OrderForm = ({
           </>
         ) : (
           <>
-            {JSON.stringify(direction) === JSON.stringify(PositionDirection.LONG) ? (
+            {JSON.stringify(direction) ===
+            JSON.stringify(PositionDirection.LONG) ? (
               <LongIcon className="w-5 h-5 mr-2" />
             ) : (
               <ShortIcon className="w-5 h-5 mr-2" />
             )}
             {isScaleOrder
               ? "Place Scale Orders"
-              : JSON.stringify(direction) === JSON.stringify(PositionDirection.LONG)
+              : JSON.stringify(direction) ===
+                JSON.stringify(PositionDirection.LONG)
               ? "Buy / Long"
               : "Sell / Short"}{" "}
             {MARKET_NAMES[marketIndex as keyof typeof MARKET_NAMES]}

@@ -2,10 +2,10 @@
 import { useDriftStore } from "@/store/driftStore";
 import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { RefreshIcon } from "../icons";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import { SpotMarkets, UserAccount } from "@drift-labs/sdk";
 import { config } from "@/config/env";
+import { RefreshAccountsScreen } from "../common/RefreshAccountsScreen";
 
 export const WithdrawalForm = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -188,17 +188,6 @@ export const WithdrawalForm = () => {
     }
   };
 
-  const handleRefreshAccounts = async () => {
-    if (publicKey) {
-      setIsLoadingAccounts(true);
-      try {
-        await fetchUserAccounts(publicKey);
-      } finally {
-        setIsLoadingAccounts(false);
-      }
-    }
-  };
-
   const getAccountName = (account: UserAccount) => {
     if (account.name) {
       return new TextDecoder().decode(new Uint8Array(account.name));
@@ -219,118 +208,141 @@ export const WithdrawalForm = () => {
   };
 
   return (
-    <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
-      <h2 className="text-xl font-semibold text-white mb-6">Withdraw Funds</h2>
+    <div className="bg-background border border-muted h-[84vh] rounded-lg p-4 shadow-lg">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold text-transparent bg-[image:var(--color-primary-gradient)] bg-clip-text">
+          Withdraw
+        </h2>
+      </div>
 
       {isLoadingAccounts ? (
         <div className="flex justify-center py-8">
           <LoadingSpinner text="Loading accounts..." />
         </div>
-      ) : userAccounts.length === 0 ? (
-        <div className="mb-4 p-4 bg-red-900/30 border border-red-700 rounded-lg">
-          <p className="text-red-400">
-            You need to create a user account first before making withdrawals.
-          </p>
-          <button
-            onClick={handleRefreshAccounts}
-            disabled={isLoadingAccounts || !publicKey}
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg mt-3 transition-colors duration-200 flex items-center"
-          >
-            <RefreshIcon className="w-4 h-4 mr-2" />
-            Refresh Accounts
-          </button>
-        </div>
       ) : (
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Select Account
-            </label>
-            <select
-              value={selectedSubAccountId}
-              onChange={(e) => setSelectedSubAccountId(Number(e.target.value))}
-              className="w-full bg-gray-700 text-white rounded-lg p-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-            >
-              {userAccounts.map((account) => (
-                <option key={account.subAccountId} value={account.subAccountId}>
-                  {getAccountName(account)}
-                </option>
-              ))}
-            </select>
-          </div>
+        ""
+      )}
 
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Select Token
-            </label>
-            <select
-              value={marketIndex}
-              onChange={(e) => setMarketIndex(Number(e.target.value))}
-              className="w-full bg-gray-700 text-white rounded-lg p-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-            >
-              {availableTokens.length > 0 ? (
-                availableTokens.map((token) => (
-                  <option key={token.marketIndex} value={token.marketIndex}>
-                    {token.symbol}
+      {!isLoadingAccounts && userAccounts.length === 0 ? (
+        <RefreshAccountsScreen
+          isLoadingAccounts={isLoadingAccounts}
+          setIsLoadingAccounts={setIsLoadingAccounts}
+        />
+      ) : (
+        ""
+      )}
+
+      {!isLoadingAccounts && userAccounts.length ? (
+        <div className="flex">
+          <div className="space-y-4 w-1/2 px-12">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Select Account
+              </label>
+              <select
+                value={selectedSubAccountId}
+                onChange={(e) =>
+                  setSelectedSubAccountId(Number(e.target.value))
+                }
+                className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors"
+              >
+                {userAccounts.map((account) => (
+                  <option
+                    key={account.subAccountId}
+                    value={account.subAccountId}
+                  >
+                    {getAccountName(account)}
                   </option>
-                ))
-              ) : (
-                <option value={0} disabled>
-                  No tokens available for withdrawal
-                </option>
-              )}
-            </select>
-          </div>
+                ))}
+              </select>
+            </div>
 
-          <div className="bg-gray-700/50 p-3 rounded-lg border border-gray-600">
-            <p className="text-sm text-gray-300">
-              Available Balance:{" "}
-              <span className="text-white font-medium">
-                {availableBalance}{" "}
-                {availableTokens.find((t) => t.marketIndex === marketIndex)
-                  ?.symbol || ""}
-              </span>
-            </p>
-          </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Select Token
+              </label>
+              <select
+                value={marketIndex}
+                onChange={(e) => setMarketIndex(Number(e.target.value))}
+                className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors"
+              >
+                {availableTokens.length > 0 ? (
+                  availableTokens.map((token) => (
+                    <option key={token.marketIndex} value={token.marketIndex}>
+                      {token.symbol}
+                    </option>
+                  ))
+                ) : (
+                  <option value={0} disabled>
+                    No tokens available for withdrawal
+                  </option>
+                )}
+              </select>
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Amount
-            </label>
-            <div className="relative">
-              <input
-                type="number"
-                value={amount}
-                onChange={handleAmountChange}
-                className="w-full bg-gray-700 text-white rounded-lg p-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                min="0"
-                step="0.1"
-                max={availableBalance}
-              />
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <span className="text-gray-400">
+            <div className="bg-muted/50 p-6 rounded-lg border border-muted">
+              <p className="text-sm text-gray-300">
+                Available Balance:{" "}
+                <span className="text-white font-medium">
+                  {availableBalance}{" "}
                   {availableTokens.find((t) => t.marketIndex === marketIndex)
                     ?.symbol || ""}
                 </span>
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Amount
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  value={amount}
+                  onChange={handleAmountChange}
+                  className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors"
+                  min="0"
+                  step="0.1"
+                  max={availableBalance}
+                />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <span className="text-gray-400">
+                    {availableTokens.find((t) => t.marketIndex === marketIndex)
+                      ?.symbol || ""}
+                  </span>
+                </div>
               </div>
             </div>
+
+            <button
+              onClick={handleWithdraw}
+              disabled={
+                isProcessing ||
+                !publicKey ||
+                isLoadingAccounts ||
+                parseFloat(amount) <= 0 ||
+                parseFloat(amount) > parseFloat(availableBalance) ||
+                availableTokens.length === 0
+              }
+              className="cursor-pointer w-full bg-muted hover:bg-chart-4 text-white py-3 rounded-lg font-medium transition-colors duration-200 disabled:bg-background disabled:cursor-not-allowed"
+            >
+              {isProcessing ? "Processing..." : "Withdraw"}
+            </button>
           </div>
 
-          <button
-            onClick={handleWithdraw}
-            disabled={
-              isProcessing ||
-              !publicKey ||
-              isLoadingAccounts ||
-              parseFloat(amount) <= 0 ||
-              parseFloat(amount) > parseFloat(availableBalance) ||
-              availableTokens.length === 0
-            }
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition-colors duration-200 disabled:bg-gray-600 disabled:cursor-not-allowed"
-          >
-            {isProcessing ? "Processing..." : "Withdraw"}
-          </button>
+          <div className="w-1/2 flex items-center justify-center">
+            <div className="w-[80%] h-[60vh] p-8 bg-muted hover:bg-chart-4 text-center transition-colors duration-200 flex flex-col gap-4 items-center justify-center rounded-lg">
+              <span className="text-2xl font-semibold text-white">
+                Withdraw Assets From Your Drift Subaccount
+              </span>
+              <span className="italic">
+                Withdraw your assets back to your wallet
+              </span>
+            </div>
+          </div>
         </div>
+      ) : (
+        ""
       )}
 
       {withdrawalStatus && (

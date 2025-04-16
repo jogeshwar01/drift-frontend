@@ -2,9 +2,9 @@
 import { useDriftStore } from "@/store/driftStore";
 import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { RefreshIcon } from "../icons";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import { UserAccount } from "@drift-labs/sdk";
+import { RefreshAccountsScreen } from "../common/RefreshAccountsScreen";
 
 export const DepositForm = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -94,17 +94,6 @@ export const DepositForm = () => {
     }
   };
 
-  const handleRefreshAccounts = async () => {
-    if (publicKey) {
-      setIsLoadingAccounts(true);
-      try {
-        await fetchUserAccounts(publicKey);
-      } finally {
-        setIsLoadingAccounts(false);
-      }
-    }
-  };
-
   const getAccountName = (account: UserAccount) => {
     if (account.name) {
       return new TextDecoder().decode(new Uint8Array(account.name));
@@ -114,89 +103,113 @@ export const DepositForm = () => {
   };
 
   return (
-    <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
-      <h2 className="text-xl font-semibold text-white mb-6">Deposit Funds</h2>
+    <div className="bg-background border border-muted h-[84vh] rounded-lg p-4 shadow-lg">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold text-transparent bg-[image:var(--color-primary-gradient)] bg-clip-text">
+          Deposit
+        </h2>
+      </div>
 
       {isLoadingAccounts ? (
         <div className="flex justify-center py-8">
           <LoadingSpinner text="Loading accounts..." />
         </div>
-      ) : userAccounts.length === 0 ? (
-        <div className="mb-4 p-4 bg-red-900/30 border border-red-700 rounded-lg">
-          <p className="text-red-400">
-            You need to create a user account first before making deposits.
-          </p>
-          <button
-            onClick={handleRefreshAccounts}
-            disabled={isLoadingAccounts || !publicKey}
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg mt-3 transition-colors duration-200 flex items-center"
-          >
-            <RefreshIcon className="w-4 h-4 mr-2" />
-            Refresh Accounts
-          </button>
-        </div>
       ) : (
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Select Account
-            </label>
-            <select
-              value={selectedSubAccountId}
-              onChange={(e) => setSelectedSubAccountId(Number(e.target.value))}
-              className="w-full bg-gray-700 text-white rounded-lg p-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-            >
-              {userAccounts.map((account) => (
-                <option key={account.subAccountId} value={account.subAccountId}>
-                  {getAccountName(account)}
-                </option>
-              ))}
-            </select>
-          </div>
+        ""
+      )}
 
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Select Token
-            </label>
-            <select
-              value={marketIndex}
-              onChange={(e) => setMarketIndex(Number(e.target.value))}
-              className="w-full bg-gray-700 text-white rounded-lg p-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-            >
-              <option value={1}>SOL</option>
-              <option value={0}>USDC</option>
-            </select>
-          </div>
+      {!isLoadingAccounts && userAccounts.length === 0 ? (
+        <RefreshAccountsScreen
+          isLoadingAccounts={isLoadingAccounts}
+          setIsLoadingAccounts={setIsLoadingAccounts}
+        />
+      ) : (
+        ""
+      )}
 
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Amount
-            </label>
-            <div className="relative">
-              <input
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="w-full bg-gray-700 text-white rounded-lg p-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                min="0"
-                step="0.1"
-              />
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <span className="text-gray-400">
-                  {marketIndex === 1 ? "SOL" : "USDC"}
-                </span>
-              </div>
+      {!isLoadingAccounts && userAccounts.length ? (
+        <div className="flex">
+          <div className="w-1/2 flex items-center justify-center">
+            <div className="w-[80%] h-[55vh] p-8 bg-muted hover:bg-chart-4 text-center transition-colors duration-200 flex flex-col gap-4 items-center justify-center rounded-lg">
+              <span className="text-2xl font-semibold text-white">
+                Deposit Assets Into Your Drift Subaccount
+              </span>
+              <span className="italic">
+                Currently we assume you already have a drift account for the
+                asset you are depositing
+              </span>
             </div>
           </div>
+          <div className="space-y-8 w-1/2 px-12">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Select Account
+              </label>
+              <select
+                value={selectedSubAccountId}
+                onChange={(e) =>
+                  setSelectedSubAccountId(Number(e.target.value))
+                }
+                className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors"
+              >
+                {userAccounts.map((account) => (
+                  <option
+                    key={account.subAccountId}
+                    value={account.subAccountId}
+                  >
+                    {getAccountName(account)}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          <button
-            onClick={handleDeposit}
-            disabled={isProcessing || !publicKey || isLoadingAccounts}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition-colors duration-200 disabled:bg-gray-600 disabled:cursor-not-allowed"
-          >
-            {isProcessing ? "Processing..." : "Deposit"}
-          </button>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Select Token
+              </label>
+              <select
+                value={marketIndex}
+                onChange={(e) => setMarketIndex(Number(e.target.value))}
+                className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors"
+              >
+                <option value={1}>SOL</option>
+                <option value={0}>USDC</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Amount
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors"
+                  min="0"
+                  step="0.1"
+                />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <span className="text-gray-400">
+                    {marketIndex === 1 ? "SOL" : "USDC"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={handleDeposit}
+              disabled={isProcessing || !publicKey || isLoadingAccounts}
+              className="cursor-pointer w-full bg-muted hover:bg-chart-4 text-white py-3 rounded-lg font-medium transition-colors duration-200 disabled:bg-background disabled:cursor-not-allowed"
+            >
+              {isProcessing ? "Processing..." : "Deposit"}
+            </button>
+          </div>
         </div>
+      ) : (
+        ""
       )}
 
       {depositStatus && (

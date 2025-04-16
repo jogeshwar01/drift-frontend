@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useDriftStore } from "@/store/driftStore";
-import { RefreshIcon } from "../icons";
 import { AccountInfoDisplay } from "./AccountInfoDisplay";
 import { LoadingSpinner } from "../common/LoadingSpinner";
+import { Refresh as RefreshIcon, Add as AddIcon } from "@mui/icons-material";
 
 export function UserAccountManager() {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -117,26 +117,11 @@ export function UserAccountManager() {
   );
 
   return (
-    <div className="mt-8 p-4 border border-gray-700 rounded-lg bg-gray-800 shadow">
+    <div className="p-4 border border-muted rounded-lg bg-background shadow">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-white">Account</h2>
-        <div className="flex space-x-4">
-          <button
-            onClick={() => setShowCreateModal(true)}
-            disabled={userAccounts.length >= 8}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded cursor-pointer transition-colors duration-200 disabled:bg-gray-700 disabled:cursor-not-allowed"
-          >
-            Create New Account
-          </button>
-          <button
-            onClick={handleRefreshAccounts}
-            disabled={isLoadingAccounts || !publicKey}
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-sm transition-colors duration-200 flex items-center cursor-pointer"
-          >
-            <RefreshIcon className="w-4 h-4 mr-2" />
-            Refresh Accounts
-          </button>
-        </div>
+        <h2 className="text-xl font-semibold text-transparent bg-[image:var(--color-primary-gradient)] bg-clip-text">
+          Account
+        </h2>
       </div>
 
       {(isLoadingAccounts || isLoading) && (
@@ -147,32 +132,59 @@ export function UserAccountManager() {
 
       {!isLoadingAccounts && !isLoading && userAccounts.length > 0 && (
         <div className="space-y-6">
-          <div>
-            <label className="block mb-2 text-gray-300">Select Account:</label>
-            <select
-              value={selectedAccount || ""}
-              onChange={(e) => setSelectedAccount(Number(e.target.value))}
-              className="border border-gray-600 bg-gray-700 text-white p-2 rounded w-full cursor-pointer"
-            >
-              {userAccounts.map((account) => {
-                let displayName;
-                if (account.name) {
-                  displayName = new TextDecoder().decode(
-                    new Uint8Array(account.name)
+          <div className="flex space-x-4 items-end">
+            <div className="w-1/2">
+              <label className="block mb-2 text-gray-300">
+                Select Account:
+              </label>
+              <select
+                value={selectedAccount || ""}
+                onChange={(e) => setSelectedAccount(Number(e.target.value))}
+                className="border border-muted w-full text-white p-2 rounded cursor-pointer"
+              >
+                {userAccounts.map((account) => {
+                  let displayName;
+                  if (account.name) {
+                    displayName = new TextDecoder().decode(
+                      new Uint8Array(account.name)
+                    );
+                  } else {
+                    displayName = `Account ${account.subAccountId}`;
+                  }
+                  return (
+                    <option
+                      key={account.subAccountId}
+                      value={account.subAccountId}
+                    >
+                      {displayName}
+                    </option>
                   );
-                } else {
-                  displayName = `Account ${account.subAccountId}`;
-                }
-                return (
-                  <option
-                    key={account.subAccountId}
-                    value={account.subAccountId}
-                  >
-                    {displayName}
-                  </option>
-                );
-              })}
-            </select>
+                })}
+              </select>
+            </div>
+
+            <div className="flex justify-end space-x-4 w-1/2 h-full">
+              <button
+                onClick={() => {
+                  setAccountName("");
+                  setStatus("");
+                  setShowCreateModal(true);
+                }}
+                disabled={userAccounts.length >= 8}
+                className="bg-muted hover:bg-chart-2/80 text-white px-4 py-2 rounded-lg cursor-pointer transition-colors duration-200 disabled:bg-gray-700 disabled:cursor-not-allowed"
+              >
+                <AddIcon className="w-4 h-4 mr-2" />
+                Create New Account
+              </button>
+              <button
+                onClick={handleRefreshAccounts}
+                disabled={isLoadingAccounts || !publicKey}
+                className="bg-muted hover:bg-chart-4 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center cursor-pointer"
+              >
+                <RefreshIcon className="w-4 h-4 mr-2" />
+                Refresh Accounts
+              </button>
+            </div>
           </div>
 
           {selectedAccountData && (
@@ -191,8 +203,8 @@ export function UserAccountManager() {
 
       {/* Create Account Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full">
+        <div className="fixed inset-0 bg-muted/80 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-background p-6 rounded-lg shadow-xl max-w-md w-full">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium text-white">
                 Create New Account
@@ -204,16 +216,14 @@ export function UserAccountManager() {
                 ✕
               </button>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-8 mt-6">
               <div>
-                <label className="block mb-2 text-gray-300">
-                  Account Name:
-                </label>
+                <label className="block mb-2 text-gray-300">Account Name</label>
                 <input
                   type="text"
                   value={accountName}
                   onChange={(e) => setAccountName(e.target.value)}
-                  className="border border-gray-600 bg-gray-700 text-white p-2 rounded w-full"
+                  className="border border-muted bg-background focus:outline-none text-white p-2 rounded w-full"
                   placeholder="My Account"
                   required
                 />
@@ -221,7 +231,7 @@ export function UserAccountManager() {
               <button
                 onClick={initializeUserAccount}
                 disabled={isLoading || !publicKey || userAccounts.length >= 8}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded w-full cursor-pointer transition-colors duration-200 disabled:bg-gray-700"
+                className="bg-muted hover:bg-muted/50 text-white px-4 py-2 rounded w-full cursor-pointer transition-colors duration-200 disabled:bg-gray-700"
               >
                 {isLoading
                   ? "Processing..."

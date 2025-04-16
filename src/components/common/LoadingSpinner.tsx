@@ -24,15 +24,15 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   const spinner = (
     <div className="flex flex-col items-center justify-center h-[60vh]">
       <div
-        className={`${spinnerSize} border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin`}
+        className={`${spinnerSize} border-4 border-gray-300 border-t-chart-4 rounded-full animate-spin`}
       ></div>
-      {text && <p className="mt-2 text-gray-300">{text}</p>}
+      {text && <p className="mt-2">{text}</p>}
     </div>
   );
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-background bg-opacity-50 flex items-center justify-center z-50">
         {spinner}
       </div>
     );

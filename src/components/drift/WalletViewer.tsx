@@ -5,6 +5,7 @@ import { PublicKey } from "@solana/web3.js";
 import { UserAccount } from "@drift-labs/sdk";
 import { AccountInfoDisplay } from "./AccountInfoDisplay";
 import { LoadingSpinner } from "../common/LoadingSpinner";
+import { PaidOutlined } from "@mui/icons-material";
 
 export const WalletViewer = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -76,28 +77,38 @@ export const WalletViewer = () => {
   );
 
   return (
-    <div className="p-4 border border-gray-700 rounded-lg bg-gray-800 shadow">
+    <div className="p-4 border border-muted rounded-lg bg-background shadow">
       <div className="space-y-6">
         <div>
-          <h2 className="text-xl font-semibold mb-4 text-white">
-            View Wallet Data
-          </h2>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold text-transparent bg-[image:var(--color-primary-gradient)] bg-clip-text">
+              View Wallet Data
+            </h2>
+          </div>
           <div className="flex space-x-4">
             <input
               type="text"
               value={walletAddress}
               onChange={(e) => setWalletAddress(e.target.value)}
               placeholder="Enter Solana wallet address"
-              className="border border-gray-600 bg-gray-700 text-white p-2 rounded flex-grow"
+              className="border border-muted bg-background text-white p-2 rounded flex-grow focus:outline-none"
             />
             <button
               onClick={handleViewWallet}
               disabled={isLoading || !driftClient || isLoadingAccounts}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded disabled:bg-gray-700 cursor-pointer transition-colors duration-200"
+              className="bg-muted hover:bg-chart-4 text-white px-4 py-2 rounded disabled:bg-background cursor-pointer transition-colors duration-200"
             >
+              <PaidOutlined className="mr-2" />
               {isLoadingAccounts ? "Loading..." : "View Wallet"}
             </button>
           </div>
+
+          {viewStatus && (
+            <p className="text-sm mt-2 ml-2 text-chart-1 wrap-anywhere">
+              {viewStatus}
+            </p>
+          )}
+          {error && <p className="text-sm text-red-400">{error}</p>}
         </div>
 
         {isLoadingAccounts && (
@@ -115,7 +126,7 @@ export const WalletViewer = () => {
               <select
                 value={selectedAccount || ""}
                 onChange={(e) => setSelectedAccount(Number(e.target.value))}
-                className="border border-gray-600 bg-gray-700 text-white p-2 rounded w-full cursor-pointer"
+                className="border border-muted bg-background text-white p-2 rounded w-full cursor-pointer"
               >
                 {viewedAccounts.map((account) => (
                   <option
@@ -143,11 +154,6 @@ export const WalletViewer = () => {
             </p>
           </div>
         )}
-
-        {viewStatus && (
-          <p className="text-sm text-gray-300 wrap-anywhere">{viewStatus}</p>
-        )}
-        {error && <p className="text-sm text-red-400">{error}</p>}
       </div>
     </div>
   );

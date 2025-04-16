@@ -28,7 +28,7 @@ export const SubAccountSelector = ({
       <select
         value={selectedSubAccountId}
         onChange={(e) => onSubAccountChange(Number(e.target.value))}
-        className="w-full bg-gray-700 text-white rounded-lg p-3 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+        className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors"
       >
         {userAccounts.map((account) => (
           <option key={account.subAccountId} value={account.subAccountId}>
