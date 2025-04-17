@@ -5,6 +5,13 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import { UserAccount } from "@drift-labs/sdk";
 import { RefreshAccountsScreen } from "../common/RefreshAccountsScreen";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const DepositForm = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -140,41 +147,49 @@ export const DepositForm = () => {
               </span>
             </div>
           </div>
-          <div className="space-y-8 w-full md:w-1/2 px-4 md:px-12">
+          <div className="space-y-4 w-full md:w-1/2 px-4 md:px-12">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Select Account
               </label>
-              <select
-                value={selectedSubAccountId}
-                onChange={(e) =>
-                  setSelectedSubAccountId(Number(e.target.value))
+              <Select
+                value={selectedSubAccountId.toString()}
+                onValueChange={(value) =>
+                  setSelectedSubAccountId(Number(value))
                 }
-                className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors"
               >
-                {userAccounts.map((account) => (
-                  <option
-                    key={account.subAccountId}
-                    value={account.subAccountId}
-                  >
-                    {getAccountName(account)}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors">
+                  <SelectValue placeholder="Select an account" />
+                </SelectTrigger>
+                <SelectContent>
+                  {userAccounts.map((account) => (
+                    <SelectItem
+                      key={account.subAccountId}
+                      value={account.subAccountId.toString()}
+                    >
+                      {getAccountName(account)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Select Token
               </label>
-              <select
-                value={marketIndex}
-                onChange={(e) => setMarketIndex(Number(e.target.value))}
-                className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors"
+              <Select
+                value={marketIndex.toString()}
+                onValueChange={(value) => setMarketIndex(Number(value))}
               >
-                <option value={1}>SOL</option>
-                <option value={0}>USDC</option>
-              </select>
+                <SelectTrigger className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors">
+                  <SelectValue placeholder="Select a token" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">SOL</SelectItem>
+                  <SelectItem value="0">USDC</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
@@ -202,7 +217,7 @@ export const DepositForm = () => {
             <button
               onClick={handleDeposit}
               disabled={isProcessing || !publicKey || isLoadingAccounts}
-              className="cursor-pointer w-full bg-muted hover:bg-chart-4 text-white py-3 rounded-lg font-medium transition-colors duration-200 disabled:bg-background disabled:cursor-not-allowed"
+              className="cursor-pointer w-full bg-muted hover:bg-chart-4 text-white py-3 rounded-lg font-medium transition-colors duration-200 disabled:bg-muted/25 disabled:cursor-not-allowed"
             >
               {isProcessing ? "Processing..." : "Deposit"}
             </button>

@@ -6,6 +6,13 @@ import { useDriftStore } from "@/store/driftStore";
 import { AccountInfoDisplay } from "./AccountInfoDisplay";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import { Refresh as RefreshIcon, Add as AddIcon } from "@mui/icons-material";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function UserAccountManager() {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -137,30 +144,34 @@ export function UserAccountManager() {
               <label className="block mb-2 text-gray-300">
                 Select Account:
               </label>
-              <select
-                value={selectedAccount || ""}
-                onChange={(e) => setSelectedAccount(Number(e.target.value))}
-                className="border border-muted w-full text-white p-2 rounded cursor-pointer"
+              <Select
+                value={selectedAccount?.toString() || ""}
+                onValueChange={(value) => setSelectedAccount(Number(value))}
               >
-                {userAccounts.map((account) => {
-                  let displayName;
-                  if (account.name) {
-                    displayName = new TextDecoder().decode(
-                      new Uint8Array(account.name)
+                <SelectTrigger className="border border-muted w-full text-white p-2 rounded cursor-pointer">
+                  <SelectValue placeholder="Select an account" />
+                </SelectTrigger>
+                <SelectContent>
+                  {userAccounts.map((account) => {
+                    let displayName;
+                    if (account.name) {
+                      displayName = new TextDecoder().decode(
+                        new Uint8Array(account.name)
+                      );
+                    } else {
+                      displayName = `Account ${account.subAccountId}`;
+                    }
+                    return (
+                      <SelectItem
+                        key={account.subAccountId}
+                        value={account.subAccountId.toString()}
+                      >
+                        {displayName}
+                      </SelectItem>
                     );
-                  } else {
-                    displayName = `Account ${account.subAccountId}`;
-                  }
-                  return (
-                    <option
-                      key={account.subAccountId}
-                      value={account.subAccountId}
-                    >
-                      {displayName}
-                    </option>
-                  );
-                })}
-              </select>
+                  })}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="flex justify-end space-x-4 w-1/2 h-full">

@@ -5,6 +5,13 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import { SpotMarkets, UserAccount } from "@drift-labs/sdk";
 import { RefreshAccountsScreen } from "../common/RefreshAccountsScreen";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const WithdrawalForm = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -239,45 +246,56 @@ export const WithdrawalForm = () => {
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Select Account
               </label>
-              <select
-                value={selectedSubAccountId}
-                onChange={(e) =>
-                  setSelectedSubAccountId(Number(e.target.value))
+              <Select
+                value={selectedSubAccountId.toString()}
+                onValueChange={(value) =>
+                  setSelectedSubAccountId(Number(value))
                 }
-                className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors"
               >
-                {userAccounts.map((account) => (
-                  <option
-                    key={account.subAccountId}
-                    value={account.subAccountId}
-                  >
-                    {getAccountName(account)}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors">
+                  <SelectValue placeholder="Select an account" />
+                </SelectTrigger>
+                <SelectContent>
+                  {userAccounts.map((account) => (
+                    <SelectItem
+                      key={account.subAccountId}
+                      value={account.subAccountId.toString()}
+                    >
+                      {getAccountName(account)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Select Token
               </label>
-              <select
-                value={marketIndex}
-                onChange={(e) => setMarketIndex(Number(e.target.value))}
-                className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors"
+              <Select
+                value={marketIndex.toString()}
+                onValueChange={(value) => setMarketIndex(Number(value))}
               >
-                {availableTokens.length > 0 ? (
-                  availableTokens.map((token) => (
-                    <option key={token.marketIndex} value={token.marketIndex}>
-                      {token.symbol}
-                    </option>
-                  ))
-                ) : (
-                  <option value={0} disabled>
-                    No tokens available for withdrawal
-                  </option>
-                )}
-              </select>
+                <SelectTrigger className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors">
+                  <SelectValue placeholder="Select a token" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableTokens.length > 0 ? (
+                    availableTokens.map((token) => (
+                      <SelectItem
+                        key={token.marketIndex}
+                        value={token.marketIndex.toString()}
+                      >
+                        {token.symbol}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="0" disabled>
+                      No tokens available for withdrawal
+                    </SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="bg-muted/50 p-2 rounded-lg border border-muted">

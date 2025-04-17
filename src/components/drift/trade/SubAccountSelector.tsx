@@ -1,5 +1,12 @@
 import { useDriftStore } from "@/store/driftStore";
 import { UserAccount } from "@drift-labs/sdk";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface SubAccountSelectorProps {
   selectedSubAccountId: number;
@@ -25,17 +32,24 @@ export const SubAccountSelector = ({
       <label className="block text-sm font-medium text-gray-300 mb-2">
         Select Account
       </label>
-      <select
-        value={selectedSubAccountId}
-        onChange={(e) => onSubAccountChange(Number(e.target.value))}
-        className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors"
+      <Select
+        value={selectedSubAccountId.toString()}
+        onValueChange={(value) => onSubAccountChange(Number(value))}
       >
-        {userAccounts.map((account) => (
-          <option key={account.subAccountId} value={account.subAccountId}>
-            {getAccountName(account)}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors">
+          <SelectValue placeholder="Select an account" />
+        </SelectTrigger>
+        <SelectContent>
+          {userAccounts.map((account) => (
+            <SelectItem
+              key={account.subAccountId}
+              value={account.subAccountId.toString()}
+            >
+              {getAccountName(account)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 };

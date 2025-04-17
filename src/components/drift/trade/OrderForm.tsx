@@ -21,6 +21,13 @@ import {
   Error as ErrorIcon,
 } from "@mui/icons-material";
 import { RefreshAccountsScreen } from "@/components/common/RefreshAccountsScreen";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface OrderFormProps {
   selectedSubAccountId: number;
@@ -269,10 +276,9 @@ export const OrderForm = ({ selectedSubAccountId }: OrderFormProps) => {
         <label className="block text-sm font-medium text-gray-300 mb-2">
           Order Type
         </label>
-        <select
+        <Select
           value={isScaleOrder ? "scale" : orderVariant}
-          onChange={(e) => {
-            const value = e.target.value;
+          onValueChange={(value) => {
             if (value === "scale") {
               setIsScaleOrder(true);
             } else {
@@ -289,14 +295,18 @@ export const OrderForm = ({ selectedSubAccountId }: OrderFormProps) => {
               }
             }
           }}
-          className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors"
         >
-          <option value="limit">Limit</option>
-          <option value="market">Market</option>
-          <option value="takeProfit">Take Profit</option>
-          <option value="stopLimit">Stop Limit</option>
-          <option value="scale">Scale</option>
-        </select>
+          <SelectTrigger className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors">
+            <SelectValue placeholder="Select order type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="limit">Limit</SelectItem>
+            <SelectItem value="market">Market</SelectItem>
+            <SelectItem value="takeProfit">Take Profit</SelectItem>
+            <SelectItem value="stopLimit">Stop Limit</SelectItem>
+            <SelectItem value="scale">Scale</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div>
