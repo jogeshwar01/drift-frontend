@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<h1 align="center"> Drift SDK UI 👾</h1>
+
+<p align="center">
+    View subaccounts and deposit/withdraw/trade perp markets on Drift.
+    <br />
+    <a href="#introduction"><strong>Introduction</strong></a> ·
+    <a href="#features"><strong>Features</strong></a> ·
+    <a href="#tech-stack"><strong>Tech Stack</strong></a> ·
+    <a href="#getting-started"><strong>Getting Started</strong></a> ·
+    <a href="#resources"><strong>Resources</strong></a>
+</p>
+
+## Introduction
+
+This repository contains a UI to view subaccounts and deposit/withdraw/trade perp markets on Drift. It provides a comprehensive interface for managing Drift Protocol's subaccounts, positions, and trading functionality.
+
+## Features
+
+### Core Features
+
+- **Solana Wallet Integration**: Seamlessly connect and interact with Solana wallets
+- **Network Switching**: Easily switch between Solana mainnet and devnet networks
+- **Subaccount Management**: View and manage up to 8 subaccounts per wallet
+- **Position Tracking**: Monitor balances, perp positions, and open orders for each subaccount
+- **Wallet Data Viewing**: Input any wallet address to view its Drift data
+- **Deposit/Withdraw**: Manage funds across subaccounts
+- **Perpetual Trading**:
+  - Market Orders
+  - Limit Orders
+
+### Stretch Goals Implemented
+
+- **Take Profit/Stop Loss**: Set automated exit points for positions
+- **Scaled Orders**: Execute orders at multiple price levels
+
+## Tech Stack
+
+- [Next.js](https://nextjs.org/) – React framework
+- [TypeScript](https://www.typescriptlang.org/) – Type-safe JavaScript
+- [Tailwind CSS](https://tailwindcss.com/) – Utility-first CSS framework
+- [Zustand](https://github.com/pmndrs/zustand) – State management
+- [@drift-labs/sdk](https://github.com/drift-labs/protocol-v2) – Drift Protocol SDK
+- [@solana/web3.js](https://github.com/solana-labs/solana-web3.js) – Solana blockchain interaction
+- [@solana/wallet-adapter-react](https://github.com/solana-labs/wallet-adapter) – Solana wallet integration
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+   ```bash
+   git clone [repository-url]
+   cd drift-frontend
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+   ```bash
+   yarn install
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Set up environment variables:
+   Create a `.env` file with the following variables:
 
-## Learn More
+   ```
+   NEXT_PUBLIC_MAINNET_RPC_URL=
+   NEXT_PUBLIC_DEVNET_RPC_URL=
+   NEXT_PUBLIC_BIRDEYE_API_KEY=
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. Run the development server:
+   ```bash
+   yarn dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `src/components/drift/` - Drift-specific components
+- `src/store/` - Zustand state management
+- `src/app/actions/` - Drift client initialization
+- `src/config/` - Environment and configuration
 
-## Deploy on Vercel
+## Key Features Implementation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Drift Client Initialization
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The application initializes the Drift client with the appropriate RPC URL based on the selected network (mainnet/devnet).
+
+### Subaccount Management
+
+- View all subaccounts associated with a wallet
+- Track balances and positions for each subaccount
+- Switch between subaccounts seamlessly
+
+### Trading Interface
+
+- Place market and limit orders
+- Set take profit and stop loss levels
+- Execute scaled orders for better position entry/exit
+
+## Resources
+
+- [Drift Protocol Documentation](https://drift-labs.github.io/v2-teacher/)
+- [Drift SDK Integration Guide](https://drift-labs.github.io/v2-teacher/#client-initialization)
+- [Solana Web3.js Documentation](https://solana-labs.github.io/solana-web3.js/)
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
