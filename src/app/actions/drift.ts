@@ -7,7 +7,7 @@ export async function getDriftClient(
   publicKey: PublicKey | null
 ) {
   try {
-    const connection = new Connection(config.RPC_URL!, "confirmed");
+    const connection = new Connection(config.RPC_URL, "confirmed");
 
     if (!publicKey) {
       console.log("No public key found");

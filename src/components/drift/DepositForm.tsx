@@ -128,8 +128,8 @@ export const DepositForm = () => {
       )}
 
       {!isLoadingAccounts && userAccounts.length ? (
-        <div className="flex">
-          <div className="w-1/2 flex items-center justify-center">
+        <div className="flex flex-col md:flex-row">
+          <div className="hidden md:flex w-1/2 items-center justify-center">
             <div className="w-[80%] h-[55vh] p-8 bg-muted hover:bg-chart-4 text-center transition-colors duration-200 flex flex-col gap-4 items-center justify-center rounded-lg">
               <span className="text-2xl font-semibold text-white">
                 Deposit Assets Into Your Drift Subaccount
@@ -140,7 +140,7 @@ export const DepositForm = () => {
               </span>
             </div>
           </div>
-          <div className="space-y-8 w-1/2 px-12">
+          <div className="space-y-8 w-full md:w-1/2 px-4 md:px-12">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Select Account
