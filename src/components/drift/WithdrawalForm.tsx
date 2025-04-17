@@ -280,7 +280,7 @@ export const WithdrawalForm = () => {
               </select>
             </div>
 
-            <div className="bg-muted/50 p-6 rounded-lg border border-muted">
+            <div className="bg-muted/50 p-2 rounded-lg border border-muted">
               <p className="text-sm text-gray-300">
                 Available Balance:{" "}
                 <span className="text-white font-medium">
@@ -324,10 +324,22 @@ export const WithdrawalForm = () => {
                 parseFloat(amount) > parseFloat(availableBalance) ||
                 availableTokens.length === 0
               }
-              className="cursor-pointer w-full bg-muted hover:bg-chart-4 text-white py-3 rounded-lg font-medium transition-colors duration-200 disabled:bg-background disabled:cursor-not-allowed"
+              className="cursor-pointer w-full bg-muted hover:bg-chart-4 text-white py-3 rounded-lg font-medium transition-colors duration-200 disabled:bg-muted/25 disabled:cursor-not-allowed"
             >
               {isProcessing ? "Processing..." : "Withdraw"}
             </button>
+
+            {withdrawalStatus && (
+              <div
+                className={`p-3 rounded-lg wrap-anywhere ${
+                  withdrawalStatus.includes("Error")
+                    ? "bg-red-900/30 border border-red-700 text-red-400"
+                    : "bg-green-900/30 border border-green-700 text-green-400"
+                }`}
+              >
+                {withdrawalStatus}
+              </div>
+            )}
           </div>
 
           <div className="hidden md:flex w-1/2 items-center justify-center">
@@ -343,18 +355,6 @@ export const WithdrawalForm = () => {
         </div>
       ) : (
         ""
-      )}
-
-      {withdrawalStatus && (
-        <div
-          className={`mt-4 p-3 rounded-lg wrap-anywhere ${
-            withdrawalStatus.includes("Error")
-              ? "bg-red-900/30 border border-red-700 text-red-400"
-              : "bg-green-900/30 border border-green-700 text-green-400"
-          }`}
-        >
-          {withdrawalStatus}
-        </div>
       )}
     </div>
   );
