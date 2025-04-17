@@ -43,6 +43,40 @@ This repository contains a UI to view subaccounts and deposit/withdraw/trade per
 - [@solana/web3.js](https://github.com/solana-labs/solana-web3.js) – Solana blockchain interaction
 - [@solana/wallet-adapter-react](https://github.com/solana-labs/wallet-adapter) – Solana wallet integration
 
+## Demo
+
+##### User Accounts
+
+![drift user accounts](/public/drift-user-accounts.png)
+
+##### Deposit
+
+![drift-deposit](/public/drift-deposit.png)
+
+##### Withdraw
+
+![drift-withdraw](/public/drift-withdraw.png)
+
+##### Perp Trade
+
+![drift-perp-trade](/public/drift-perp-trade.png)
+
+##### Order History
+
+![drift-order-history](/public/drift-order-history.png)
+
+##### View Wallet Data
+
+![drift-view-wallet-data](/public/drift-view-wallet.png)
+
+##### Wallet Adaptor
+
+![drift-wallet-adaptor](/public/drift-wallet-adaptor.png)
+
+##### Default
+
+![drift-default](/public/drift-default.png)
+
 ## Getting Started
 
 1. Clone the repository:
