@@ -194,10 +194,23 @@ export function UserAccountManager() {
       )}
 
       {!isLoadingAccounts && !isLoading && userAccounts.length === 0 && (
-        <div className="text-center py-8 h-[60vh] flex justify-center items-center">
+        <div className="text-center py-8 h-[60vh] flex justify-center flex-col gap-4 items-center">
           <p className="text-gray-300">
             No accounts found. Create a new account to get started.
           </p>
+
+          <button
+            onClick={() => {
+              setAccountName("");
+              setStatus("");
+              setShowCreateModal(true);
+            }}
+            disabled={userAccounts.length >= 8}
+            className="bg-muted hover:bg-chart-2/80 text-white px-4 py-2 rounded-lg cursor-pointer transition-colors duration-200 disabled:bg-gray-700 disabled:cursor-not-allowed"
+          >
+            <AddIcon className="w-4 h-4 mr-2" />
+            Create New Account
+          </button>
         </div>
       )}
 

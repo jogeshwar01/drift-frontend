@@ -4,8 +4,8 @@ import { DRIFT_ICON_URL } from "@/config/constants";
 import { UserAccount, SpotMarkets, BN, PublicKey } from "@drift-labs/sdk";
 import Image from "next/image";
 import Link from "next/link";
-import { config } from "@/config/env";
 import { ExternalLinkIcon } from "lucide-react";
+import { useDriftStore } from "@/store/driftStore";
 
 // Helper function to convert hex string to decimal
 const hexToDecimal = (hex: string): string => {
@@ -52,8 +52,9 @@ interface MarketData {
 }
 
 export const AccountInfoDisplay = ({ account }: AccountInfoDisplayProps) => {
+  const { network } = useDriftStore();
   // Get all available spot markets
-  const spotMarkets = SpotMarkets[config.NETWORK];
+  const spotMarkets = SpotMarkets[network];
 
   // Prepare market data with balances
   const marketsWithBalances: MarketData[] = [];

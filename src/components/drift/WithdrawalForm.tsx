@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import { SpotMarkets, UserAccount } from "@drift-labs/sdk";
-import { config } from "@/config/env";
 import { RefreshAccountsScreen } from "../common/RefreshAccountsScreen";
 
 export const WithdrawalForm = () => {
@@ -12,6 +11,7 @@ export const WithdrawalForm = () => {
   const { publicKey, signTransaction } = useWallet();
   const fetchUserAccounts = useDriftStore((state) => state.fetchUserAccounts);
   const userAccounts = useDriftStore((state) => state.userAccounts);
+  const network = useDriftStore((state) => state.network);
 
   const [amount, setAmount] = useState<string>("0.5");
   const [marketIndex, setMarketIndex] = useState<number>(1); // SOL
@@ -61,7 +61,7 @@ export const WithdrawalForm = () => {
               parseInt(pos.cumulativeDeposits, 16) > 0
           )
           .map((pos) => {
-            const spotMarket = SpotMarkets[config.NETWORK].find(
+            const spotMarket = SpotMarkets[network].find(
               (market) => market.marketIndex === pos.marketIndex
             );
             return {
@@ -82,7 +82,7 @@ export const WithdrawalForm = () => {
         }
       }
     }
-  }, [userAccounts, selectedSubAccountId, marketIndex]);
+  }, [userAccounts, selectedSubAccountId, marketIndex, network]);
 
   // Update available balance when subaccount or market index changes
   useEffect(() => {
@@ -99,7 +99,7 @@ export const WithdrawalForm = () => {
         if (position) {
           const balance = position.cumulativeDeposits;
 
-          const spotMarket = SpotMarkets[config.NETWORK].find((marketData) => {
+          const spotMarket = SpotMarkets[network].find((marketData) => {
             return marketData.marketIndex === marketIndex;
           });
 
@@ -115,7 +115,7 @@ export const WithdrawalForm = () => {
         }
       }
     }
-  }, [userAccounts, selectedSubAccountId, marketIndex, driftClient]);
+  }, [userAccounts, selectedSubAccountId, marketIndex, driftClient, network]);
 
   const handleWithdraw = async () => {
     if (!driftClient || !publicKey || !signTransaction) {

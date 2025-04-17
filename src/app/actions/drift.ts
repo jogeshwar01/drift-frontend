@@ -1,13 +1,14 @@
 import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { DriftClient, DriftEnv, IWallet } from "@drift-labs/sdk";
-import { config } from "../../config/env";
 
 export async function getDriftClient(
   setDriftClient: (client: DriftClient) => void,
-  publicKey: PublicKey | null
+  publicKey: PublicKey | null,
+  network: DriftEnv,
+  rpcUrl: string
 ) {
   try {
-    const connection = new Connection(config.RPC_URL, "confirmed");
+    const connection = new Connection(rpcUrl, "confirmed");
 
     if (!publicKey) {
       console.log("No public key found");
@@ -36,7 +37,7 @@ export async function getDriftClient(
     const driftClient = new DriftClient({
       connection,
       wallet,
-      env: config.NETWORK as DriftEnv,
+      env: network,
     });
 
     // const driftClient = new DriftClient({
@@ -52,7 +53,7 @@ export async function getDriftClient(
     return {
       success: true,
       clientData: {
-        env: config.NETWORK!,
+        env: network,
         client: driftClient,
       },
     };

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { DriftClient, UserAccount } from "@drift-labs/sdk";
+import { DriftClient, UserAccount, DriftEnv } from "@drift-labs/sdk";
 import { PublicKey } from "@solana/web3.js";
 
 interface DriftStore {
@@ -12,6 +12,10 @@ interface DriftStore {
   ) => Promise<UserAccount[]>;
   isLoading: boolean;
   error: string | null;
+  network: DriftEnv;
+  rpcUrl: string;
+  setNetwork: (network: DriftEnv, rpcUrl: string) => void;
+  setRpcUrl: (rpcUrl: string) => void;
 }
 
 export const useDriftStore = create<DriftStore>((set, get) => ({
@@ -20,6 +24,12 @@ export const useDriftStore = create<DriftStore>((set, get) => ({
   userAccounts: [],
   isLoading: true,
   error: null,
+  network: "mainnet-beta",
+  rpcUrl: process.env.NEXT_PUBLIC_MAINNET_RPC_URL!,
+  setRpcUrl: (rpcUrl) => set({ rpcUrl }),
+  setNetwork: (network, rpcUrl) => {
+    set({ network, rpcUrl, isLoading: true });
+  },
   fetchUserAccounts: async (publicKey, setAccounts = true) => {
     const { driftClient } = get();
     if (!publicKey || !driftClient) {

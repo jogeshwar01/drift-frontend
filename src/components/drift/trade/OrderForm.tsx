@@ -13,8 +13,6 @@ import { MARKET_SYMBOLS, MARKET_NAMES } from "@/config/constants";
 import { LoadingIcon } from "@/components/icons";
 
 import {
-  Warning as WarningIcon,
-  Refresh as RefreshIcon,
   ShowChart as ChartIcon,
   AttachMoney as CurrencyIcon,
   TrendingUp as LongIcon,
@@ -28,16 +26,16 @@ interface OrderFormProps {
   selectedSubAccountId: number;
 }
 
+const marketIndex = 0;
+
 export const OrderForm = ({ selectedSubAccountId }: OrderFormProps) => {
   const driftClient = useDriftStore((state) => state.driftClient);
   const { publicKey, signTransaction } = useWallet();
   const fetchUserAccounts = useDriftStore((state) => state.fetchUserAccounts);
   const userAccounts = useDriftStore((state) => state.userAccounts);
-  const isLoading = useDriftStore((state) => state.isLoading);
   const [isLoadingAccounts, setIsLoadingAccounts] = useState<boolean>(false);
   const [orderStatus, setOrderStatus] = useState<string>("");
   const [orderType, setOrderType] = useState<OrderType>(OrderType.LIMIT);
-  const [marketIndex, setMarketIndex] = useState<number>(0);
   const [direction, setDirection] = useState<PositionDirection>(
     PositionDirection.LONG
   );

@@ -1,6 +1,6 @@
 "use client";
 import { useDriftStore } from "@/store/driftStore";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { MARKET_NAMES } from "@/config/constants";
 import { LoadingIcon } from "@/components/icons";
 
@@ -32,7 +32,7 @@ export const OrdersHistory = ({
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -58,11 +58,11 @@ export const OrdersHistory = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userAccounts, selectedSubAccountId]);
 
   useEffect(() => {
     fetchOrders();
-  }, [userAccounts, selectedSubAccountId]);
+  }, [userAccounts, selectedSubAccountId, fetchOrders]);
 
   const handleRefreshOrders = async () => {
     if (!publicKey || isRefreshing) return;

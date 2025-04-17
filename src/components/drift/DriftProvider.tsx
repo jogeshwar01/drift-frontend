@@ -10,20 +10,20 @@ export function DriftProvider({
 }: {
   readonly children: React.ReactNode;
 }) {
-  const { setDriftClient } = useDriftStore();
+  const { setDriftClient, network, rpcUrl } = useDriftStore();
   const { publicKey } = useWallet();
 
   useEffect(() => {
     const initializeDrift = async () => {
       try {
-        await getDriftClient(setDriftClient, publicKey);
+        await getDriftClient(setDriftClient, publicKey, network, rpcUrl);
       } catch (error) {
         console.error("Error in Drift initialization:", error);
       }
     };
 
     initializeDrift();
-  }, [setDriftClient, publicKey]);
+  }, [setDriftClient, publicKey, network, rpcUrl]);
 
   return <>{children}</>;
 }
