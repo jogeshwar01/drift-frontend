@@ -55,21 +55,22 @@ export function NavMobile({
             <div className="p-4">
               <div className="flex flex-col space-y-4">
                 <div className="flex flex-col space-y-2">
-                  {tabs.map(
-                    (tab) =>
-                      tab.id !== activeTab && (
-                        <button
-                          key={tab.id}
-                          onClick={() => {
-                            setActiveTab(tab.id);
-                            setIsMenuOpen(false);
-                          }}
-                          className="py-2 px-3 rounded-full font-medium text-sm cursor-pointer text-gray-400 hover:text-gray-300 hover:bg-muted/25"
-                        >
-                          {tab.label}
-                        </button>
-                      )
-                  )}
+                  {tabs.map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => {
+                        setActiveTab(tab.id);
+                        setIsMenuOpen(false);
+                      }}
+                      className={`py-2 px-3 rounded-full font-medium text-sm cursor-pointer ${
+                        tab.id === activeTab
+                          ? "text-transparent bg-[image:var(--color-primary-gradient)] bg-clip-text hover:cursor-default"
+                          : "text-gray-400 hover:text-gray-300 hover:bg-muted/25"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
                 </div>
                 <div className="flex justify-center">
                   <NetworkToggle />
