@@ -3,7 +3,7 @@ import { useDriftStore } from "@/store/driftStore";
 import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { LoadingSpinner } from "../common/LoadingSpinner";
-import { UserAccount } from "@drift-labs/sdk";
+import { BN, SpotMarkets, UserAccount } from "@drift-labs/sdk";
 import { RefreshAccountsScreen } from "../common/RefreshAccountsScreen";
 import {
   Select,
@@ -12,12 +12,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Image from "next/image";
+import { DRIFT_ICON_URL } from "@/config/constants";
 
 export const DepositForm = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
   const { publicKey, signTransaction } = useWallet();
   const fetchUserAccounts = useDriftStore((state) => state.fetchUserAccounts);
   const userAccounts = useDriftStore((state) => state.userAccounts);
+  const { network } = useDriftStore();
 
   const [amount, setAmount] = useState<string>("0.5");
   const [marketIndex, setMarketIndex] = useState<number>(1); // SOL
@@ -25,6 +28,10 @@ export const DepositForm = () => {
   const [selectedSubAccountId, setSelectedSubAccountId] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [isLoadingAccounts, setIsLoadingAccounts] = useState<boolean>(false);
+
+  const formatAmount = (amount: string, decimals: number) => {
+    return (parseInt(amount, 10) / 10 ** decimals).toFixed(5);
+  };
 
   useEffect(() => {
     if (publicKey) {
@@ -66,6 +73,47 @@ export const DepositForm = () => {
       // Get the associated token account
       const associatedTokenAccount =
         await driftClient.getAssociatedTokenAccount(marketIndex);
+      const marketData = SpotMarkets[network][marketIndex];
+      const tokenPrecisionExp = marketData?.precisionExp;
+      const tokenSymbol = marketData?.symbol;
+
+      let tokenBalance = 0;
+      // validate if user has a token account for the market
+      try {
+        if (associatedTokenAccount == publicKey) {
+          // for sol - stored on publicKey
+          tokenBalance = await driftClient.connection.getBalance(
+            associatedTokenAccount
+          );
+        } else {
+          // for other tokens - ATA = associatedTokenAccount
+          tokenBalance = parseFloat(
+            (
+              await driftClient.connection.getTokenAccountBalance(
+                associatedTokenAccount
+              )
+            )?.value.amount
+          );
+        }
+      } catch (error) {
+        console.error("Error getting token account balance:", error);
+        setDepositStatus(
+          `Error: Could not find token account for ${tokenSymbol}. Please deposit ${tokenSymbol} in your wallet before continuing.`
+        );
+        return;
+      }
+
+      const tokenBalanceBN = new BN(tokenBalance);
+      if (depositAmount.gt(tokenBalanceBN)) {
+        const formattedTokenBalance = formatAmount(
+          tokenBalanceBN,
+          tokenPrecisionExp
+        );
+        setDepositStatus(
+          `Error: Insufficient balance. You have ${formattedTokenBalance} ${tokenSymbol} in your wallet.`
+        );
+        return;
+      }
 
       // Create the deposit transaction
       const tx = await driftClient.createDepositTxn(
@@ -85,7 +133,9 @@ export const DepositForm = () => {
         driftClient.opts
       );
 
-      setDepositStatus(`Deposit successful! Transaction signature: ${txSig}`);
+      setDepositStatus(
+        `Deposit successful! Transaction signature: ${txSig.toString()}`
+      );
 
       // Refresh accounts to update balances
       setIsLoadingAccounts(true);
@@ -137,10 +187,7 @@ export const DepositForm = () => {
               <span className="text-2xl font-semibold text-white">
                 Deposit Assets Into Your Drift Subaccount
               </span>
-              <span className="italic">
-                Currently we assume you already have a drift account for the
-                asset you are depositing
-              </span>
+              <span className="italic">Deposit assets from your wallet</span>
             </div>
           </div>
           <div className="w-full space-y-4 lg:w-1/2 lg:space-y-8">
@@ -182,8 +229,31 @@ export const DepositForm = () => {
                   <SelectValue placeholder="Select a token" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">SOL</SelectItem>
-                  <SelectItem value="0">USDC</SelectItem>
+                  {SpotMarkets[network].map((market) => (
+                    <SelectItem
+                      key={market.marketIndex}
+                      value={market.marketIndex.toString()}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Image
+                          src={`${DRIFT_ICON_URL}${market.symbol.toLowerCase()}.svg`}
+                          alt={market.symbol}
+                          className="w-6 h-6"
+                          onError={(e) => {
+                            (
+                              e.target as HTMLImageElement
+                            ).src = `${DRIFT_ICON_URL}sol.svg`;
+                          }}
+                          width={20}
+                          height={20}
+                        />
+                        {market.symbol}
+                        <div className="text-xs text-gray-400">
+                          ({market.mint.toString()})
+                        </div>
+                      </div>
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -204,7 +274,7 @@ export const DepositForm = () => {
                 />
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                   <span className="text-gray-400">
-                    {marketIndex === 1 ? "SOL" : "USDC"}
+                    {SpotMarkets[network][marketIndex].symbol}
                   </span>
                 </div>
               </div>

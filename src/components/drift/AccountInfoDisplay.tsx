@@ -2,10 +2,10 @@
 
 import { DRIFT_ICON_URL } from "@/config/constants";
 import { UserAccount, SpotMarkets, BN, PublicKey } from "@drift-labs/sdk";
-import Image from "next/image";
 import Link from "next/link";
 import { ExternalLinkIcon } from "lucide-react";
 import { useDriftStore } from "@/store/driftStore";
+import Image from "next/image";
 
 // Helper function to convert hex string to decimal
 const hexToDecimal = (hex: string): string => {

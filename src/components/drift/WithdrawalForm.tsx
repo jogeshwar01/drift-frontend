@@ -3,7 +3,7 @@ import { useDriftStore } from "@/store/driftStore";
 import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { LoadingSpinner } from "../common/LoadingSpinner";
-import { SpotMarkets, UserAccount } from "@drift-labs/sdk";
+import { SpotMarkets, UserAccount, PublicKey } from "@drift-labs/sdk";
 import { RefreshAccountsScreen } from "../common/RefreshAccountsScreen";
 import {
   Select,
@@ -12,6 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Image from "next/image";
+import { DRIFT_ICON_URL } from "@/config/constants";
 
 export const WithdrawalForm = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -28,7 +30,7 @@ export const WithdrawalForm = () => {
   const [isLoadingAccounts, setIsLoadingAccounts] = useState<boolean>(false);
   const [availableBalance, setAvailableBalance] = useState<string>("0");
   const [availableTokens, setAvailableTokens] = useState<
-    { marketIndex: number; symbol: string }[]
+    { marketIndex: number; symbol: string; mint: PublicKey | undefined }[]
   >([]);
 
   const formatAmount = (amount: string, decimals: number) => {
@@ -74,6 +76,7 @@ export const WithdrawalForm = () => {
             return {
               marketIndex: pos.marketIndex,
               symbol: spotMarket?.symbol ?? `Token ${pos.marketIndex}`,
+              mint: spotMarket?.mint,
             };
           });
 
@@ -282,7 +285,22 @@ export const WithdrawalForm = () => {
                         key={token.marketIndex}
                         value={token.marketIndex.toString()}
                       >
+                        <Image
+                          src={`${DRIFT_ICON_URL}${token.symbol.toLowerCase()}.svg`}
+                          alt={token.symbol}
+                          className="w-6 h-6"
+                          onError={(e) => {
+                            (
+                              e.target as HTMLImageElement
+                            ).src = `${DRIFT_ICON_URL}sol.svg`;
+                          }}
+                          width={20}
+                          height={20}
+                        />
                         {token.symbol}
+                        <div className="text-xs text-gray-400">
+                          ({token?.mint?.toString()})
+                        </div>
                       </SelectItem>
                     ))
                   ) : (
