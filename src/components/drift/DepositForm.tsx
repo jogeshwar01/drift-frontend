@@ -110,7 +110,7 @@ export const DepositForm = () => {
   };
 
   return (
-    <div className="bg-background border border-muted h-[84vh] rounded-lg p-4 shadow-lg">
+    <div className="bg-background border border-muted rounded-lg p-4 min-h-[84vh] shadow-lg">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold text-transparent bg-[image:var(--color-primary-gradient)] bg-clip-text">
           Deposit
@@ -121,23 +121,19 @@ export const DepositForm = () => {
         <div className="flex justify-center py-8">
           <LoadingSpinner text="Loading accounts..." />
         </div>
-      ) : (
-        ""
-      )}
+      ) : null}
 
       {!isLoadingAccounts && userAccounts.length === 0 ? (
         <RefreshAccountsScreen
           isLoadingAccounts={isLoadingAccounts}
           setIsLoadingAccounts={setIsLoadingAccounts}
         />
-      ) : (
-        ""
-      )}
+      ) : null}
 
       {!isLoadingAccounts && userAccounts.length ? (
-        <div className="flex flex-col md:flex-row">
-          <div className="hidden md:flex w-1/2 items-center justify-center">
-            <div className="w-[80%] h-[55vh] p-8 bg-muted hover:bg-chart-4 text-center transition-colors duration-200 flex flex-col gap-4 items-center justify-center rounded-lg">
+        <div className="flex flex-col lg:flex-row items-center h-full justify-center gap-8 lg:items-start">
+          <div className="hidden lg:block w-1/2">
+            <div className="p-30 bg-muted hover:bg-chart-4 text-center transition-colors duration-200 flex flex-col gap-4 items-center justify-center rounded-lg">
               <span className="text-2xl font-semibold text-white">
                 Deposit Assets Into Your Drift Subaccount
               </span>
@@ -147,7 +143,7 @@ export const DepositForm = () => {
               </span>
             </div>
           </div>
-          <div className="space-y-4 w-full md:w-1/2 px-4 md:px-12">
+          <div className="w-full space-y-4 lg:w-1/2 lg:space-y-8">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Select Account
@@ -235,9 +231,7 @@ export const DepositForm = () => {
             )}
           </div>
         </div>
-      ) : (
-        ""
-      )}
+      ) : null}
     </div>
   );
 };

@@ -44,8 +44,8 @@ export const PerpOrderForm = () => {
       </div>
 
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="w-full md:w-3/5 transition-all duration-300 ease-in-out">
+        <div className="flex flex-col lg:flex-row gap-6">
+          <div className="w-full lg:w-3/5 transition-all duration-300 ease-in-out">
             <DriftPriceChart
               marketSymbol={" SOL"}
               marketMint={"So11111111111111111111111111111111111111112"}

@@ -139,8 +139,8 @@ export function UserAccountManager() {
 
       {!isLoadingAccounts && !isLoading && userAccounts.length > 0 && (
         <div className="space-y-6">
-          <div className="flex space-x-4 items-end">
-            <div className="w-1/2">
+          <div className="flex flex-col lg:flex-row gap-2 lg:space-x-4 lg:items-end">
+            <div className="w-full lg:w-1/2">
               <label className="block mb-2 text-gray-300">
                 Select Account:
               </label>
@@ -174,7 +174,7 @@ export function UserAccountManager() {
               </Select>
             </div>
 
-            <div className="flex justify-end space-x-4 w-1/2 h-full">
+            <div className="flex flex-col lg:flex-row gap-2 lg:space-x-4 lg:justify-end max-w-[300px] lg:max-w-1/2 lg:w-1/2">
               <button
                 onClick={() => {
                   setAccountName("");
@@ -182,18 +182,18 @@ export function UserAccountManager() {
                   setShowCreateModal(true);
                 }}
                 disabled={userAccounts.length >= 8}
-                className="bg-muted hover:bg-chart-2/80 text-white px-4 py-2 rounded-lg cursor-pointer transition-colors duration-200 disabled:bg-gray-700 disabled:cursor-not-allowed"
+                className="bg-muted hover:bg-chart-2/80 flex items-center justify-center text-white px-4 py-2 rounded-lg cursor-pointer transition-colors duration-200 disabled:bg-gray-700 disabled:cursor-not-allowed"
               >
                 <AddIcon className="w-4 h-4 mr-2" />
-                Create New Account
+                <div>Create New Account</div>
               </button>
               <button
                 onClick={handleRefreshAccounts}
                 disabled={isLoadingAccounts || !publicKey}
-                className="bg-muted hover:bg-chart-4 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center cursor-pointer"
+                className="bg-muted hover:bg-chart-4 flex items-center justify-center text-white px-4 py-2 rounded-lg transition-colors duration-200 cursor-pointer"
               >
                 <RefreshIcon className="w-4 h-4 mr-2" />
-                Refresh Accounts
+                <div>Refresh Accounts</div>
               </button>
             </div>
           </div>

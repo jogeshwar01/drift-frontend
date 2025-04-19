@@ -6,6 +6,13 @@ import { UserAccount } from "@drift-labs/sdk";
 import { AccountInfoDisplay } from "./AccountInfoDisplay";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import { PaidOutlined } from "@mui/icons-material";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const WalletViewer = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -76,6 +83,14 @@ export const WalletViewer = () => {
     (account) => account.subAccountId === selectedAccount
   );
 
+  const getAccountName = (account: UserAccount) => {
+    if (account.name) {
+      return new TextDecoder().decode(new Uint8Array(account.name));
+    } else {
+      return `Account ${account.subAccountId}`;
+    }
+  };
+
   return (
     <div className="p-4 border border-muted rounded-lg bg-background shadow">
       <div className="space-y-6">
@@ -123,22 +138,24 @@ export const WalletViewer = () => {
               <label className="block mb-2 text-gray-300">
                 Select Account:
               </label>
-              <select
-                value={selectedAccount || ""}
-                onChange={(e) => setSelectedAccount(Number(e.target.value))}
-                className="border border-muted bg-background text-white p-2 rounded w-full cursor-pointer"
+              <Select
+                value={selectedAccount?.toString()}
+                onValueChange={(value) => setSelectedAccount(Number(value))}
               >
-                {viewedAccounts.map((account) => (
-                  <option
-                    key={account.subAccountId}
-                    value={account.subAccountId}
-                  >
-                    {account.name
-                      ? new TextDecoder().decode(new Uint8Array(account.name))
-                      : `Account ${account.subAccountId}`}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors">
+                  <SelectValue placeholder="Select an account" />
+                </SelectTrigger>
+                <SelectContent>
+                  {viewedAccounts.map((account) => (
+                    <SelectItem
+                      key={account.subAccountId}
+                      value={account.subAccountId.toString()}
+                    >
+                      {getAccountName(account)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {selectedAccountData && (
