@@ -6,7 +6,8 @@ import { WithdrawalForm } from "@/components/drift/WithdrawalForm";
 import { PerpOrderForm } from "@/components/drift/PerpOrderForm";
 import { WalletViewer } from "@/components/drift/WalletViewer";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Navbar } from "@/components/nav/Navbar";
+import { Navbar } from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("create-account");
@@ -33,6 +34,7 @@ export default function Home() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }
