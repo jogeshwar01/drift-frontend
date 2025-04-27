@@ -13,6 +13,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 export function UserAccountManager() {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -225,53 +232,48 @@ export function UserAccountManager() {
         </div>
       )}
 
-      {/* Create Account Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-muted/80 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-background p-6 rounded-lg shadow-xl max-w-md w-full">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-white">
-                Create New Account
-              </h3>
-              <button
-                onClick={() => setShowCreateModal(false)}
-                className="text-gray-400 hover:text-gray-300 cursor-pointer"
-              >
-                ✕
-              </button>
+      <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create New Account</DialogTitle>
+            <DialogDescription>
+              Enter a name for your new account. This will help you identify it
+              later.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="block mb-2 text-sm font-medium text-muted-foreground">
+                Account Name
+              </label>
+              <input
+                type="text"
+                value={accountName}
+                onChange={(e) => setAccountName(e.target.value)}
+                className="border border-muted bg-background focus:outline-none text-white p-2 rounded w-full"
+                placeholder="My Account"
+                required
+              />
             </div>
-            <div className="space-y-8 mt-6">
-              <div>
-                <label className="block mb-2 text-gray-300">Account Name</label>
-                <input
-                  type="text"
-                  value={accountName}
-                  onChange={(e) => setAccountName(e.target.value)}
-                  className="border border-muted bg-background focus:outline-none text-white p-2 rounded w-full"
-                  placeholder="My Account"
-                  required
-                />
-              </div>
-              <button
-                onClick={initializeUserAccount}
-                disabled={isLoading || !publicKey || userAccounts.length >= 8}
-                className="bg-muted hover:bg-muted/50 text-white px-4 py-2 rounded w-full cursor-pointer transition-colors duration-200 disabled:bg-gray-700"
-              >
-                {isLoading
-                  ? "Processing..."
-                  : userAccounts.length >= 8
-                  ? "Account Limit Reached"
-                  : "Create Account"}
-              </button>
-            </div>
+            <button
+              onClick={initializeUserAccount}
+              disabled={isLoading || !publicKey || userAccounts.length >= 8}
+              className="bg-muted hover:bg-muted/50 text-white px-4 py-2 rounded w-full cursor-pointer transition-colors duration-200 disabled:bg-gray-700"
+            >
+              {isLoading
+                ? "Processing..."
+                : userAccounts.length >= 8
+                ? "Account Limit Reached"
+                : "Create Account"}
+            </button>
             {status && (
-              <p className="mt-4 text-sm text-gray-300 wrap-anywhere">
+              <p className="text-sm text-muted-foreground wrap-anywhere">
                 {status}
               </p>
             )}
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
