@@ -14,6 +14,11 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import { DRIFT_ICON_URL } from "@/config/constants";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 export const DepositForm = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -160,148 +165,160 @@ export const DepositForm = () => {
   };
 
   return (
-    <div className="bg-background border border-muted rounded-lg p-4 min-h-[84vh] shadow-lg">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-transparent bg-[image:var(--color-primary-gradient)] bg-clip-text">
-          Deposit
-        </h2>
-      </div>
+    <div className="flex min-h-[84vh] flex-col items-center justify-center bg-muted/10 rounded-md p-6 md:p-10">
+      <div className="w-full max-w-sm md:max-w-3xl">
+        <div className="flex flex-col gap-6">
+          <Card className="overflow-hidden">
+            <CardContent className="grid p-0 md:grid-cols-2">
+              <div className="p-6 md:p-8">
+                <div className="flex flex-col gap-6">
+                  <div className="flex flex-col items-center text-center">
+                    <h1 className="text-2xl font-bold">Deposit</h1>
+                  </div>
+                  <Separator className="my-1" />
 
-      {isLoadingAccounts ? (
-        <div className="flex justify-center py-8">
-          <LoadingSpinner text="Loading accounts..." />
-        </div>
-      ) : null}
+                  {isLoadingAccounts ? (
+                    <div className="flex justify-center items-center h-[40vh]">
+                      <LoadingSpinner text="Getting account data..." />
+                    </div>
+                  ) : null}
 
-      {!isLoadingAccounts && userAccounts.length === 0 ? (
-        <RefreshAccountsScreen
-          isLoadingAccounts={isLoadingAccounts}
-          setIsLoadingAccounts={setIsLoadingAccounts}
-        />
-      ) : null}
+                  {!isLoadingAccounts && userAccounts.length === 0 ? (
+                    <RefreshAccountsScreen
+                      isLoadingAccounts={isLoadingAccounts}
+                      setIsLoadingAccounts={setIsLoadingAccounts}
+                    />
+                  ) : null}
 
-      {!isLoadingAccounts && userAccounts.length ? (
-        <div className="flex flex-col lg:flex-row items-center h-full justify-center gap-8 lg:items-start">
-          <div className="hidden lg:block w-1/2">
-            <div className="p-30 bg-muted hover:bg-chart-4 text-center transition-colors duration-200 flex flex-col gap-4 items-center justify-center rounded-lg">
-              <span className="text-2xl font-semibold text-white">
-                Deposit Assets Into Your Drift Subaccount
-              </span>
-              <span className="italic">Deposit assets from your wallet</span>
-            </div>
-          </div>
-          <div className="w-full space-y-4 lg:w-1/2 lg:space-y-8">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Select Account
-              </label>
-              <Select
-                value={selectedSubAccountId.toString()}
-                onValueChange={(value) =>
-                  setSelectedSubAccountId(Number(value))
-                }
-              >
-                <SelectTrigger className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors">
-                  <SelectValue placeholder="Select an account" />
-                </SelectTrigger>
-                <SelectContent>
-                  {userAccounts.map((account) => (
-                    <SelectItem
-                      key={account.subAccountId}
-                      value={account.subAccountId.toString()}
-                    >
-                      {getAccountName(account)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                  {!isLoadingAccounts && userAccounts.length ? (
+                    <div className="space-y-6">
+                      <div className="flex flex-col gap-4">
+                        <Label htmlFor="account">Select Account</Label>
+                        <Select
+                          value={selectedSubAccountId.toString()}
+                          onValueChange={(value) =>
+                            setSelectedSubAccountId(Number(value))
+                          }
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select an account" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {userAccounts.map((account) => (
+                              <SelectItem
+                                key={account.subAccountId}
+                                value={account.subAccountId.toString()}
+                              >
+                                {getAccountName(account)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Select Token
-              </label>
-              <Select
-                value={marketIndex.toString()}
-                onValueChange={(value) => setMarketIndex(Number(value))}
-              >
-                <SelectTrigger className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors">
-                  <SelectValue placeholder="Select a token" />
-                </SelectTrigger>
-                <SelectContent>
-                  {SpotMarkets[network].map((market) => (
-                    <SelectItem
-                      key={market.marketIndex}
-                      value={market.marketIndex.toString()}
-                    >
-                      <div className="flex items-center gap-2">
-                        <Image
-                          src={`${DRIFT_ICON_URL}${market.symbol.toLowerCase()}.svg`}
-                          alt={market.symbol}
-                          className="w-6 h-6"
-                          onError={(e) => {
-                            (
-                              e.target as HTMLImageElement
-                            ).src = `${DRIFT_ICON_URL}sol.svg`;
-                          }}
-                          width={20}
-                          height={20}
-                        />
-                        {market.symbol}
-                        <div className="text-xs text-gray-400">
-                          ({market.mint.toString()})
+                      <div className="flex flex-col gap-4">
+                        <Label htmlFor="token">Select Token</Label>
+                        <Select
+                          value={marketIndex.toString()}
+                          onValueChange={(value) =>
+                            setMarketIndex(Number(value))
+                          }
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select a token" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {SpotMarkets[network].map((market) => (
+                              <SelectItem
+                                key={market.marketIndex}
+                                value={market.marketIndex.toString()}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <Image
+                                    src={`${DRIFT_ICON_URL}${market.symbol.toLowerCase()}.svg`}
+                                    alt={market.symbol}
+                                    className="w-6 h-6"
+                                    onError={(e) => {
+                                      (
+                                        e.target as HTMLImageElement
+                                      ).src = `${DRIFT_ICON_URL}sol.svg`;
+                                    }}
+                                    width={20}
+                                    height={20}
+                                  />
+                                  {market.symbol}
+                                  <div className="text-xs text-gray-400">
+                                    ({market.mint.toString()})
+                                  </div>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="flex flex-col gap-4">
+                        <Label htmlFor="amount">Amount</Label>
+                        <div className="relative">
+                          <Input
+                            id="amount"
+                            type="text"
+                            inputMode="decimal"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                            className="w-full"
+                            min="0"
+                            step="0.1"
+                          />
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <span className="text-gray-400">
+                              {SpotMarkets[network][marketIndex].symbol}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Amount
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  inputMode="decimal"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="w-full bg-background text-white rounded-lg p-3 border border-muted focus:outline-none transition-colors"
-                  min="0"
-                  step="0.1"
-                />
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <span className="text-gray-400">
-                    {SpotMarkets[network][marketIndex].symbol}
-                  </span>
+                      <Button
+                        onClick={handleDeposit}
+                        disabled={
+                          isProcessing || !publicKey || isLoadingAccounts
+                        }
+                        className="w-full cursor-pointer"
+                      >
+                        {isProcessing ? "Processing..." : "Deposit"}
+                      </Button>
+
+                      {depositStatus && (
+                        <div
+                          className={`w-full p-3 rounded-lg wrap-anywhere ${
+                            depositStatus.includes("Error")
+                              ? "bg-red-900/30 border border-red-700 text-red-400"
+                              : "bg-green-900/30 border border-green-700 text-green-400"
+                          }`}
+                        >
+                          {depositStatus}
+                        </div>
+                      )}
+                    </div>
+                  ) : null}
                 </div>
               </div>
-            </div>
-
-            <button
-              onClick={handleDeposit}
-              disabled={isProcessing || !publicKey || isLoadingAccounts}
-              className="cursor-pointer w-full bg-muted hover:bg-chart-4 text-white py-3 rounded-lg font-medium transition-colors duration-200 disabled:bg-muted/25 disabled:cursor-not-allowed"
-            >
-              {isProcessing ? "Processing..." : "Deposit"}
-            </button>
-
-            {depositStatus && (
-              <div
-                className={`w-full p-3 rounded-lg wrap-anywhere ${
-                  depositStatus.includes("Error")
-                    ? "bg-red-900/30 border border-red-700 text-red-400"
-                    : "bg-green-900/30 border border-green-700 text-green-400"
-                }`}
-              >
-                {depositStatus}
+              <div className="relative hidden bg-linear-to-br from-muted/50 to-chart-2/40 md:block">
+                <div className="absolute inset-0 flex items-center justify-center p-10">
+                  <div className="text-center space-y-4">
+                    <h2 className="text-2xl font-semibold text-white">
+                      Deposit Assets Into Your Drift Subaccount
+                    </h2>
+                    <p className="text-gray-400 italic">
+                      Deposit assets from your wallet
+                    </p>
+                  </div>
+                </div>
               </div>
-            )}
-          </div>
+            </CardContent>
+          </Card>
         </div>
-      ) : null}
+      </div>
     </div>
   );
 };

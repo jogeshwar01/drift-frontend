@@ -195,7 +195,7 @@ export function NavTabs({ activeTab, setActiveTab }: NavTabsProps) {
           </NavigationMenuTrigger>
           <NavigationMenuContent>
             <div className="px-2 py-4 flex w-[470px]">
-              <div className="w-[45%] h-44 from-muted/50 to-chart-5/50 bg-linear-to-b gap-2 flex flex-col p-4 ml-2 items-start justify-end rounded-md">
+              <div className="w-[45%] h-44 from-muted/50 to-chart-3/50 bg-linear-to-b gap-2 flex flex-col p-4 ml-2 items-start justify-end rounded-md">
                 <Image src="/favicon.svg" alt="logo" width={40} height={40} />
                 <div className="font-semibold text-white">Network</div>
                 <div className="text-sm text-muted-foreground">

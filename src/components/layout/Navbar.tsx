@@ -31,8 +31,8 @@ export function Navbar({ activeTab, setActiveTab }: NavbarProps) {
           <Image
             src="/drift-logo.svg"
             alt="Drift"
-            width={100}
-            height={100}
+            width={90}
+            height={90}
             className="hidden lg:block"
             priority={true}
           />
