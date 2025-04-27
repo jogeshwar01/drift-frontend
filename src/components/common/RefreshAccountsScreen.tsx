@@ -28,7 +28,7 @@ export const RefreshAccountsScreen = ({
   };
 
   return (
-    <div className="mb-4 p-4 bg-red-900/30 border h-[70vh] flex justify-center items-center flex-col gap-2 border-red-700 rounded-lg">
+    <div className="mb-4 p-4 bg-red-900/30 border h-[40vh] flex justify-center items-center flex-col gap-2 border-red-700 rounded-lg">
       <p className="text-red-400">
         You need to create a user account first before performing any transaction.
       </p>

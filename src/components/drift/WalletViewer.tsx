@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
 
 export const WalletViewer = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -71,7 +72,7 @@ export const WalletViewer = () => {
       }
     } catch (error) {
       console.error("Error viewing wallet:", error);
-      setViewStatus(
+      toast.error(
         `Error: ${error instanceof Error ? error.message : String(error)}`
       );
     } finally {
@@ -130,7 +131,11 @@ export const WalletViewer = () => {
               {viewStatus}
             </p>
           )}
-          {error && <p className="text-sm text-red-400">{error}</p>}
+          {error && (
+            <div className="p-4 rounded-md bg-red-500/10 text-red-500">
+              {error}
+            </div>
+          )}
         </div>
 
         {isLoadingAccounts && (
@@ -142,9 +147,7 @@ export const WalletViewer = () => {
         {!isLoadingAccounts && viewedAccounts.length > 0 && (
           <div className="space-y-6">
             <div>
-              <label className="block mb-2 text-gray-300">
-                Select Account
-              </label>
+              <label className="block mb-2 text-gray-300">Select Account</label>
               <Select
                 value={selectedAccount?.toString()}
                 onValueChange={(value) => setSelectedAccount(Number(value))}

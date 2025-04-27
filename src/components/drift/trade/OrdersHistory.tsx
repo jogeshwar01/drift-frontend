@@ -3,6 +3,7 @@ import { useDriftStore } from "@/store/driftStore";
 import { useCallback, useEffect, useState } from "react";
 import { MARKET_NAMES } from "@/config/constants";
 import { LoadingIcon } from "@/components/icons";
+import { toast } from "sonner";
 
 import {
   Refresh as RefreshIcon,
@@ -29,18 +30,16 @@ export const OrdersHistory = ({
   const { publicKey } = useWallet();
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const fetchOrders = useCallback(async () => {
     try {
       setIsLoading(true);
-      setError(null);
       const account = userAccounts.find(
         (acc) => acc.subAccountId === selectedSubAccountId
       );
       if (!account) {
-        setError("Account not found");
+        toast.error("Account not found");
         return;
       }
       // Filter for open orders
@@ -54,7 +53,10 @@ export const OrdersHistory = ({
 
       setOrders(openOrders);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch orders");
+      console.error("Error fetching orders:", err);
+      toast.error(
+        err instanceof Error ? err.message : "Failed to fetch orders"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -71,7 +73,10 @@ export const OrdersHistory = ({
     try {
       await fetchUserAccounts(publicKey);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to refresh orders");
+      console.error("Error refreshing orders:", err);
+      toast.error(
+        err instanceof Error ? err.message : "Failed to refresh orders"
+      );
     } finally {
       setIsRefreshing(false);
     }
@@ -91,17 +96,6 @@ export const OrdersHistory = ({
         <div className="flex items-center justify-center p-4">
           <LoadingIcon className="w-6 h-6 text-blue-400" />
           <span className="ml-2 text-gray-300">Loading orders...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-background border border-muted rounded-lg p-4">
-        <div className="flex items-center p-4 text-red-400">
-          <ErrorIcon className="w-6 h-6" />
-          <span className="ml-2">{error}</span>
         </div>
       </div>
     );

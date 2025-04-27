@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 
 export const DepositForm = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
@@ -29,7 +30,6 @@ export const DepositForm = () => {
 
   const [amount, setAmount] = useState<string>("0.5");
   const [marketIndex, setMarketIndex] = useState<number>(1); // SOL
-  const [depositStatus, setDepositStatus] = useState<string>("");
   const [selectedSubAccountId, setSelectedSubAccountId] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [isLoadingAccounts, setIsLoadingAccounts] = useState<boolean>(false);
@@ -56,18 +56,24 @@ export const DepositForm = () => {
 
   const handleDeposit = async () => {
     if (!driftClient || !publicKey || !signTransaction) {
-      setDepositStatus("Please connect your wallet first");
+      toast.error("Please connect your wallet first", {
+        id: "deposit",
+      });
       return;
     }
 
     if (userAccounts.length === 0) {
-      setDepositStatus("You need to create an account first");
+      toast.error("You need to create an account first", {
+        id: "deposit",
+      });
       return;
     }
 
     try {
       setIsProcessing(true);
-      setDepositStatus("Preparing deposit transaction...");
+      toast.loading("Preparing deposit transaction...", {
+        id: "deposit",
+      });
 
       // Convert amount to the correct precision
       const depositAmount = driftClient.convertToSpotPrecision(
@@ -102,8 +108,11 @@ export const DepositForm = () => {
         }
       } catch (error) {
         console.error("Error getting token account balance:", error);
-        setDepositStatus(
-          `Error: Could not find token account for ${tokenSymbol}. Please deposit ${tokenSymbol} in your wallet before continuing.`
+        toast.error(
+          `Error: Could not find token account for ${tokenSymbol}. Please deposit ${tokenSymbol} in your wallet before continuing.`,
+          {
+            id: "deposit",
+          }
         );
         return;
       }
@@ -114,8 +123,11 @@ export const DepositForm = () => {
           tokenBalanceBN,
           tokenPrecisionExp
         );
-        setDepositStatus(
-          `Error: Insufficient balance. You have ${formattedTokenBalance} ${tokenSymbol} in your wallet.`
+        toast.error(
+          `Error: Insufficient balance. You have ${formattedTokenBalance} ${tokenSymbol} in your wallet.`,
+          {
+            id: "deposit",
+          }
         );
         return;
       }
@@ -138,8 +150,11 @@ export const DepositForm = () => {
         driftClient.opts
       );
 
-      setDepositStatus(
-        `Deposit successful! Transaction signature: ${txSig.toString()}`
+      toast.success(
+        `Deposit successful! Transaction signature: ${txSig.toString()}`,
+        {
+          id: "deposit",
+        }
       );
 
       // Refresh accounts to update balances
@@ -147,8 +162,11 @@ export const DepositForm = () => {
       await fetchUserAccounts(publicKey);
     } catch (error) {
       console.error("Error during deposit:", error);
-      setDepositStatus(
-        `Error: ${error instanceof Error ? error.message : String(error)}`
+      toast.error(
+        `Error: ${error instanceof Error ? error.message : String(error)}`,
+        {
+          id: "deposit",
+        }
       );
     } finally {
       setIsProcessing(false);
@@ -287,18 +305,6 @@ export const DepositForm = () => {
                       >
                         {isProcessing ? "Processing..." : "Deposit"}
                       </Button>
-
-                      {depositStatus && (
-                        <div
-                          className={`w-full p-3 rounded-lg wrap-anywhere ${
-                            depositStatus.includes("Error")
-                              ? "bg-red-900/30 border border-red-700 text-red-400"
-                              : "bg-green-900/30 border border-green-700 text-green-400"
-                          }`}
-                        >
-                          {depositStatus}
-                        </div>
-                      )}
                     </div>
                   ) : null}
                 </div>

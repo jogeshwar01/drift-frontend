@@ -11,14 +11,13 @@ import {
 } from "@drift-labs/sdk";
 import { MARKET_SYMBOLS, MARKET_NAMES } from "@/config/constants";
 import { LoadingIcon } from "@/components/icons";
+import { toast } from "sonner";
 
 import {
   ShowChart as ChartIcon,
   AttachMoney as CurrencyIcon,
   TrendingUp as LongIcon,
   TrendingDown as ShortIcon,
-  CheckCircle as SuccessIcon,
-  Error as ErrorIcon,
 } from "@mui/icons-material";
 import { RefreshAccountsScreen } from "@/components/common/RefreshAccountsScreen";
 import {
@@ -41,7 +40,6 @@ export const OrderForm = ({ selectedSubAccountId }: OrderFormProps) => {
   const fetchUserAccounts = useDriftStore((state) => state.fetchUserAccounts);
   const userAccounts = useDriftStore((state) => state.userAccounts);
   const [isLoadingAccounts, setIsLoadingAccounts] = useState<boolean>(false);
-  const [orderStatus, setOrderStatus] = useState<string>("");
   const [orderType, setOrderType] = useState<OrderType>(OrderType.LIMIT);
   const [direction, setDirection] = useState<PositionDirection>(
     PositionDirection.LONG
@@ -66,18 +64,24 @@ export const OrderForm = ({ selectedSubAccountId }: OrderFormProps) => {
 
   const handlePlaceOrder = async () => {
     if (!driftClient || !publicKey || !signTransaction) {
-      setOrderStatus("Please connect your wallet first");
+      toast.error("Please connect your wallet first", {
+        id: "order",
+      });
       return;
     }
 
     if (userAccounts.length === 0) {
-      setOrderStatus("You need to create an account first");
+      toast.error("You need to create an account first", {
+        id: "order",
+      });
       return;
     }
 
     try {
       setIsProcessing(true);
-      setOrderStatus("Preparing order transaction...");
+      toast.loading("Preparing order transaction...", {
+        id: "order",
+      });
 
       if (isScaleOrder) {
         // Handle scale orders
@@ -134,8 +138,11 @@ export const OrderForm = ({ selectedSubAccountId }: OrderFormProps) => {
           driftClient.opts
         );
 
-        setOrderStatus(
-          `Scale orders placed successfully! Transaction signature: ${txSig}`
+        toast.success(
+          `Scale orders placed successfully! Transaction signature: ${txSig}`,
+          {
+            id: "order",
+          }
         );
       } else {
         // Handle single order (market, limit, or trigger)
@@ -207,14 +214,20 @@ export const OrderForm = ({ selectedSubAccountId }: OrderFormProps) => {
           driftClient.opts
         );
 
-        setOrderStatus(
-          `Order placed successfully! Transaction signature: ${txSig}`
+        toast.success(
+          `Order placed successfully! Transaction signature: ${txSig}`,
+          {
+            id: "order",
+          }
         );
       }
     } catch (error) {
       console.error("Error placing order:", error);
-      setOrderStatus(
-        `Error: ${error instanceof Error ? error.message : String(error)}`
+      toast.error(
+        `Error: ${error instanceof Error ? error.message : String(error)}`,
+        {
+          id: "order",
+        }
       );
     } finally {
       setIsProcessing(false);
@@ -491,27 +504,6 @@ export const OrderForm = ({ selectedSubAccountId }: OrderFormProps) => {
           </>
         )}
       </button>
-
-      {orderStatus && (
-        <div
-          className={`mt-4 p-4 rounded-lg flex items-start wrap-anywhere max-w-full ${
-            orderStatus.includes("Error")
-              ? "bg-red-900/30 border border-red-700 text-red-400"
-              : orderStatus.includes("successful")
-              ? "bg-green-900/30 border border-green-700 text-green-400"
-              : "bg-blue-900/30 border border-blue-700 text-blue-400"
-          }`}
-        >
-          {orderStatus.includes("Error") ? (
-            <ErrorIcon className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" />
-          ) : orderStatus.includes("successful") ? (
-            <SuccessIcon className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" />
-          ) : (
-            <LoadingIcon className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" />
-          )}
-          <span>{orderStatus}</span>
-        </div>
-      )}
     </div>
   );
 };

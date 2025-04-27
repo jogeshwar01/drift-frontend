@@ -19,6 +19,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
+
 export const WithdrawalForm = () => {
   const driftClient = useDriftStore((state) => state.driftClient);
   const { publicKey, signTransaction } = useWallet();
@@ -28,7 +30,6 @@ export const WithdrawalForm = () => {
 
   const [amount, setAmount] = useState<string>("0.5");
   const [marketIndex, setMarketIndex] = useState<number>(1); // SOL
-  const [withdrawalStatus, setWithdrawalStatus] = useState<string>("");
   const [selectedSubAccountId, setSelectedSubAccountId] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [isLoadingAccounts, setIsLoadingAccounts] = useState<boolean>(false);
@@ -133,24 +134,32 @@ export const WithdrawalForm = () => {
 
   const handleWithdraw = async () => {
     if (!driftClient || !publicKey || !signTransaction) {
-      setWithdrawalStatus("Please connect your wallet first");
+      toast.error("Please connect your wallet first", {
+        id: "withdraw",
+      });
       return;
     }
 
     if (userAccounts.length === 0) {
-      setWithdrawalStatus("You need to create an account first");
+      toast.error("You need to create an account first", {
+        id: "withdraw",
+      });
       return;
     }
 
     // Check if amount is greater than available balance
     if (parseFloat(amount) > parseFloat(availableBalance)) {
-      setWithdrawalStatus("Error: Amount exceeds available balance");
+      toast.error("Error: Amount exceeds available balance", {
+        id: "withdraw",
+      });
       return;
     }
 
     try {
       setIsProcessing(true);
-      setWithdrawalStatus("Preparing withdrawal transaction...");
+      toast.loading("Preparing withdrawal transaction...", {
+        id: "withdraw",
+      });
 
       // Convert amount to the correct precision
       const withdrawalAmount = driftClient.convertToSpotPrecision(
@@ -184,17 +193,20 @@ export const WithdrawalForm = () => {
         driftClient.opts
       );
 
-      setWithdrawalStatus(
-        `Withdrawal successful! Transaction signature: ${txSig}`
-      );
+      toast.success(`Withdrawal successful! Transaction signature: ${txSig}`, {
+        id: "withdraw",
+      });
 
       // Refresh accounts to update balances
       setIsLoadingAccounts(true);
       await fetchUserAccounts(publicKey);
     } catch (error) {
       console.error("Error during withdrawal:", error);
-      setWithdrawalStatus(
-        `Error: ${error instanceof Error ? error.message : String(error)}`
+      toast.error(
+        `Error: ${error instanceof Error ? error.message : String(error)}`,
+        {
+          id: "withdraw",
+        }
       );
     } finally {
       setIsProcessing(false);
@@ -368,18 +380,6 @@ export const WithdrawalForm = () => {
                       >
                         {isProcessing ? "Processing..." : "Withdraw"}
                       </Button>
-
-                      {withdrawalStatus && (
-                        <div
-                          className={`p-3 rounded-lg wrap-anywhere ${
-                            withdrawalStatus.includes("Error")
-                              ? "bg-red-900/30 border border-red-700 text-red-400"
-                              : "bg-green-900/30 border border-green-700 text-green-400"
-                          }`}
-                        >
-                          {withdrawalStatus}
-                        </div>
-                      )}
                     </div>
                   ) : null}
                 </div>
