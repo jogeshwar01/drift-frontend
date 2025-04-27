@@ -12,10 +12,10 @@ interface NavMobileProps {
 
 const tabs = [
   { id: "create-account", label: "Account" },
+  { id: "wallet-data", label: "View Wallet Data" },
+  { id: "perp", label: "Perpetuals" },
   { id: "deposit", label: "Deposit" },
   { id: "withdraw", label: "Withdraw" },
-  { id: "trade", label: "Trade" },
-  { id: "wallet-data", label: "View Wallet Data" },
 ];
 
 export function NavMobile({

@@ -23,7 +23,7 @@ export default function Home() {
             {activeTab === "create-account" && <UserAccountManager />}
             {activeTab === "deposit" && <DepositForm />}
             {activeTab === "withdraw" && <WithdrawalForm />}
-            {activeTab === "trade" && <PerpOrderForm />}
+            {activeTab === "perp" && <PerpOrderForm />}
             {activeTab === "wallet-data" && <WalletViewer />}
           </div>
         ) : (

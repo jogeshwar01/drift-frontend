@@ -17,7 +17,7 @@ export const NetworkToggle = () => {
   return (
     <button
       onClick={toggleNetwork}
-      className="group py-2 px-3 rounded-full font-medium text-sm cursor-pointer bg-muted hover:bg-chart-4 text-white transition-colors duration-200 relative w-[160px] text-center"
+      className="group py-2 px-3 rounded-sm font-medium text-sm cursor-pointer bg-muted/70 hover:bg-chart-4 text-white transition-colors duration-200 relative w-[160px] text-center" 
     >
       <span className="block group-hover:hidden">
         {network === "mainnet-beta" ? "Mainnet" : "Devnet"}

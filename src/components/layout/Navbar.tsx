@@ -1,7 +1,6 @@
 "use client";
 
 import { WalletMultiButtonDynamic } from "@/components/wallet/WalletButton";
-import { NetworkToggle } from "@/components/drift/NetworkToggle";
 import { useWallet } from "@solana/wallet-adapter-react";
 import Image from "next/image";
 import { NavTabs } from "./NavTabs";
@@ -16,7 +15,7 @@ const tabs = [
   { id: "create-account", label: "Account" },
   { id: "deposit", label: "Deposit" },
   { id: "withdraw", label: "Withdraw" },
-  { id: "trade", label: "Trade" },
+  { id: "perp", label: "Perp" },
   { id: "wallet-data", label: "View Wallet Data" },
 ];
 
@@ -51,7 +50,6 @@ export function Navbar({ activeTab, setActiveTab }: NavbarProps) {
             {publicKey && (
               <NavTabs activeTab={activeTab} setActiveTab={setActiveTab} />
             )}
-            {publicKey && <NetworkToggle />}
           </div>
 
           {/* Mobile Navigation */}
