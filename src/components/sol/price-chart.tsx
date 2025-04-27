@@ -115,7 +115,7 @@ const PriceChart = ({
 
   if (!data.length || !chartConfig) {
     return (
-      <Card className="w-full">
+      <Card className="w-full py-6">
         <CardHeader className="relative gap-1.5">
           <CardTitle className="flex items-center gap-3 text-xl">
             <Skeleton className="h-[32px] w-[32px] shrink-0 rounded-full" />
@@ -135,7 +135,7 @@ const PriceChart = ({
   }
 
   return (
-    <Card className="w-full bg-black text-white border-gray-700">
+    <Card className="w-full bg-black text-white border-gray-700 py-4">
       <CardHeader className="relative gap-1.5">
         <CardTitle className="flex items-center gap-2 text-xl">
           <TokenIcon asset={asset} /> {chartTitle}
