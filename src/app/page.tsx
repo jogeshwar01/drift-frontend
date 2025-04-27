@@ -8,6 +8,7 @@ import { WalletViewer } from "@/components/drift/WalletViewer";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Navbar } from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { PageAirplaneAnimation } from "@/components/common/PageAirplaneAnimation";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("create-account");
@@ -15,6 +16,8 @@ export default function Home() {
 
   return (
     <div className="font-[family-name:var(--font-geist-sans)] min-h-screen bg-background pb-8">
+      <PageAirplaneAnimation />
+
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

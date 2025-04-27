@@ -9,7 +9,6 @@ import {
   Refresh as RefreshIcon,
   TrendingUp as LongIcon,
   TrendingDown as ShortIcon,
-  Error as ErrorIcon,
 } from "@mui/icons-material";
 
 import { Order, OrderType, PositionDirection } from "@drift-labs/sdk";

@@ -45,7 +45,12 @@
 }
 
 :root {
-  --primary-gradient: linear-gradient(90deg, #e8a2a0 0%, #9468f1 50%, #71cce9 100%);
+  --primary-gradient: linear-gradient(
+    90deg,
+    #e8a2a0 0%,
+    #9468f1 50%,
+    #71cce9 100%
+  );
   --radius: 0.4rem;
   --background: hsl(240 10% 3.9%);
   --foreground: hsl(0 0% 98%);
@@ -137,6 +142,19 @@
 
 /* Hide scrollbar for IE, Edge and Firefox */
 * {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+@keyframes page-fly {
+  0% {
+    transform: translateX(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100vw) rotate(45deg);
+  }
+}
+
+.animate-page-fly {
+  animation: page-fly 2s ease-in forwards;
 }
