@@ -37,8 +37,9 @@ This repository contains a UI to view subaccounts and deposit/withdraw/trade per
 
 - [Next.js](https://nextjs.org/) – React framework
 - [TypeScript](https://www.typescriptlang.org/) – Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) – Utility-first CSS framework
 - [Zustand](https://github.com/pmndrs/zustand) – State management
+- [Tailwind CSS](https://tailwindcss.com/) – Utility-first CSS framework
+- [Shadcn UI](https://ui.shadcn.com/) / [Radix UI](https://www.radix-ui.com/) – UI components
 - [@drift-labs/sdk](https://github.com/drift-labs/protocol-v2) – Drift Protocol SDK
 - [@solana/web3.js](https://github.com/solana-labs/solana-web3.js) – Solana blockchain interaction
 - [@solana/wallet-adapter-react](https://github.com/solana-labs/wallet-adapter) – Solana wallet integration
@@ -72,6 +73,10 @@ This repository contains a UI to view subaccounts and deposit/withdraw/trade per
 ##### Wallet Adaptor
 
 ![drift-wallet-adaptor](/public/drift-wallet-adaptor.png)
+
+#### Navbar
+
+![drift-navbar](/public/drift-navbar.png)
 
 ##### Default
 

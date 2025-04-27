@@ -204,7 +204,7 @@ export const AccountInfoDisplay = ({ account }: AccountInfoDisplayProps) => {
       )}
 
       <div className="space-y-4">
-        <div className="space-y-2">
+        <div className="space-y-2 max-h-[400px] overflow-y-auto">
           {remainingTokens.map((market, index) => (
             <div
               key={`market-${market.marketIndex}`}
