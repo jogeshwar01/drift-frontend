@@ -6,6 +6,7 @@ import { useDriftStore } from "@/store/driftStore";
 import { AccountInfoDisplay } from "./AccountInfoDisplay";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import { Refresh as RefreshIcon, Add as AddIcon } from "@mui/icons-material";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -25,7 +26,6 @@ export function UserAccountManager() {
   const driftClient = useDriftStore((state) => state.driftClient);
   const { publicKey, signTransaction } = useWallet();
   const isLoading = useDriftStore((state) => state.isLoading);
-  const [status, setStatus] = useState<string>("");
   const [accountName, setAccountName] = useState<string>("");
   const [selectedAccount, setSelectedAccount] = useState<number | null>(null);
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
@@ -53,29 +53,33 @@ export function UserAccountManager() {
 
   const initializeUserAccount = async () => {
     if (!driftClient || !publicKey || !signTransaction) {
-      setStatus("Please connect your wallet first");
+      toast.error("Please connect your wallet first", { id: "create-account" });
       return;
     }
 
     if (!accountName.trim()) {
-      setStatus("Please enter an account name");
+      toast.error("Please enter an account name", { id: "create-account" });
       return;
     }
 
     // Maximum of 8 sub-accounts allowed
     if (userAccounts.length >= 8) {
-      setStatus("Maximum number of accounts (8) reached.");
+      toast.error("Maximum number of accounts (8) reached.", {
+        id: "create-account",
+      });
       return;
     }
+    setIsLoadingAccounts(true);
     let subAccountId = 0;
     try {
       subAccountId = await driftClient.getNextSubAccountId();
     } catch (error) {
       console.log("Error getting next subaccount id", error);
+      toast.error("Error getting next subaccount id", { id: "create-account" });
     }
 
     try {
-      setStatus("Initializing user account...");
+      toast.loading("Initializing user account...", { id: "create-account" });
 
       // Get the initialization instructions
       const [initializeIxs] = await driftClient.getInitializeUserAccountIxs(
@@ -99,17 +103,19 @@ export function UserAccountManager() {
       // Add the user to the client's cache
       await driftClient.addUser(subAccountId);
 
-      setStatus(
-        `Account initialized successfully! Transaction signature: ${txSig}`
+      toast.success(
+        `Account initialized successfully! Transaction signature: ${txSig}`,
+        { id: "create-account" }
       );
 
       // Refresh the accounts list
-      setIsLoadingAccounts(true);
       await fetchUserAccounts(publicKey);
       setShowCreateModal(false);
     } catch (error) {
       console.error("Error initializing user account:", error);
-      setStatus(`${error instanceof Error ? error.message : String(error)}`);
+      toast.error(`${error instanceof Error ? error.message : String(error)}`, {
+        id: "create-account",
+      });
     } finally {
       setIsLoadingAccounts(false);
     }
@@ -148,9 +154,7 @@ export function UserAccountManager() {
         <div className="space-y-6">
           <div className="flex flex-col lg:flex-row gap-2 lg:space-x-4 lg:items-end">
             <div className="w-full lg:w-1/2">
-              <label className="block mb-2 text-gray-300">
-                Select Account
-              </label>
+              <label className="block mb-2 text-gray-300">Select Account</label>
               <Select
                 value={selectedAccount?.toString() || ""}
                 onValueChange={(value) => setSelectedAccount(Number(value))}
@@ -185,7 +189,6 @@ export function UserAccountManager() {
               <button
                 onClick={() => {
                   setAccountName("");
-                  setStatus("");
                   setShowCreateModal(true);
                 }}
                 disabled={userAccounts.length >= 8}
@@ -220,7 +223,6 @@ export function UserAccountManager() {
           <button
             onClick={() => {
               setAccountName("");
-              setStatus("");
               setShowCreateModal(true);
             }}
             disabled={userAccounts.length >= 8}
@@ -250,6 +252,11 @@ export function UserAccountManager() {
                 type="text"
                 value={accountName}
                 onChange={(e) => setAccountName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    initializeUserAccount();
+                  }
+                }}
                 className="border border-muted bg-background focus:outline-none text-white p-2 rounded w-full"
                 placeholder="My Account"
                 required
@@ -257,8 +264,13 @@ export function UserAccountManager() {
             </div>
             <button
               onClick={initializeUserAccount}
-              disabled={isLoading || !publicKey || userAccounts.length >= 8}
-              className="bg-muted hover:bg-muted/50 text-white px-4 py-2 rounded w-full cursor-pointer transition-colors duration-200 disabled:bg-gray-700"
+              disabled={
+                isLoading ||
+                isLoadingAccounts ||
+                !publicKey ||
+                userAccounts.length >= 8
+              }
+              className="bg-muted hover:bg-muted/50 text-white px-4 py-2 rounded w-full cursor-pointer transition-colors duration-200 disabled:bg-muted/50"
             >
               {isLoading
                 ? "Processing..."
