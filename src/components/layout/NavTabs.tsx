@@ -87,9 +87,24 @@ export function NavTabs({ activeTab, setActiveTab }: NavTabsProps) {
     <NavigationMenu className="border border-muted p-1 rounded-md">
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Account</NavigationMenuTrigger>
+          <NavigationMenuTrigger
+            className={`${
+              accountTabs.some((tab) => tab.id === activeTab)
+                ? "bg-muted/75"
+                : "bg-transparent"
+            }`}
+          >
+            <div
+              className={`${
+                accountTabs.some((tab) => tab.id === activeTab) &&
+                "text-transparent bg-[image:var(--color-primary-gradient)] bg-clip-text"
+              }`}
+            >
+              Account
+            </div>
+          </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <div className="p-4 flex w-[470px]">
+            <div className="p-4 flex w-[466px]">
               <div className="w-[40%] h-44 from-muted/50 to-chart-4/50 bg-linear-to-b gap-2 flex flex-col p-4 items-start justify-end rounded-md">
                 <Image src="/favicon.svg" alt="logo" width={40} height={40} />
                 <div className="font-semibold text-white">Account</div>
@@ -123,9 +138,24 @@ export function NavTabs({ activeTab, setActiveTab }: NavTabsProps) {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Trade</NavigationMenuTrigger>
+          <NavigationMenuTrigger
+            className={`${
+              tradeTabs.some((tab) => tab.id === activeTab)
+                ? "bg-muted/75"
+                : "bg-transparent"
+            }`}
+          >
+            <div
+              className={`${
+                tradeTabs.some((tab) => tab.id === activeTab) &&
+                "text-transparent bg-[image:var(--color-primary-gradient)] bg-clip-text"
+              }`}
+            >
+              Trade
+            </div>
+          </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <div className="p-4 flex w-[470px]">
+            <div className="p-4 flex w-[466px]">
               <div className="w-[50%] h-48 from-muted/50 to-chart-1/50 bg-linear-to-b gap-2 flex flex-col p-4 items-start justify-end rounded-md">
                 <Image src="/favicon.svg" alt="logo" width={40} height={40} />
                 <div className="font-semibold text-white">Trade</div>
@@ -175,26 +205,32 @@ export function NavTabs({ activeTab, setActiveTab }: NavTabsProps) {
               active={activeTab === tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-2 text-left ${
-                activeTab === tab.id
-                  ? "text-transparent bg-[image:var(--color-primary-gradient)] bg-clip-text focus:text-transparent focus:bg-[image:var(--color-primary-gradient)] focus:bg-clip-text"
-                  : "cursor-pointer"
+                activeTab === tab.id ? "bg-muted/75" : "bg-transparent"
               }`}
             >
               <button className="w-full text-left">
-                <div className="font-medium">{tab.label}</div>
+                <div
+                  className={`font-medium ${
+                    activeTab === tab.id
+                      ? "text-transparent bg-[image:var(--color-primary-gradient)] bg-clip-text"
+                      : "cursor-pointer"
+                  }`}
+                >
+                  {tab.label}
+                </div>
               </button>
             </NavigationMenuLink>
           </NavigationMenuItem>
         ))}
         <NavigationMenuItem>
-          <NavigationMenuTrigger>
+          <NavigationMenuTrigger className="bg-transparent focus:bg-transparent">
             <span className="text-muted-foreground">
               {network.split("-")[0].charAt(0).toUpperCase() +
                 network.split("-")[0].slice(1)}
             </span>
           </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <div className="px-2 py-4 flex w-[470px]">
+            <div className="px-2 py-4 flex w-[466px]">
               <div className="w-[45%] h-44 from-muted/50 to-chart-3/50 bg-linear-to-b gap-2 flex flex-col p-4 ml-2 items-start justify-end rounded-md">
                 <Image src="/favicon.svg" alt="logo" width={40} height={40} />
                 <div className="font-semibold text-white">Network</div>
@@ -209,14 +245,18 @@ export function NavTabs({ activeTab, setActiveTab }: NavTabsProps) {
                     asChild
                     active={network === tab.id}
                     onClick={() => handleNetworkChange(tab.id)}
-                    className={`px-4 py-2 text-left ${
-                      network === tab.id
-                        ? "text-transparent bg-[image:var(--color-primary-gradient)] bg-clip-text focus:text-transparent focus:bg-[image:var(--color-primary-gradient)] focus:bg-clip-text"
-                        : "cursor-pointer"
-                    }`}
+                    className="px-4 py-2"
                   >
-                    <button className="w-full text-left">
-                      <div className="font-medium">{tab.label}</div>
+                    <button className="w-full text-left cursor-pointer">
+                      <div
+                        className={`font-medium ${
+                          network === tab.id
+                            ? "text-transparent bg-[image:var(--color-primary-gradient)] bg-clip-text"
+                            : "text-white"
+                        }`}
+                      >
+                        {tab.label}
+                      </div>
                       <div className="text-sm text-muted-foreground">
                         {tab.description}
                       </div>
