@@ -6,6 +6,13 @@ import Link from "next/link";
 import { ExternalLinkIcon } from "lucide-react";
 import { useDriftStore } from "@/store/driftStore";
 import Image from "next/image";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 // Helper function to convert hex string to decimal
 const hexToDecimal = (hex: string): string => {
@@ -53,7 +60,6 @@ interface MarketData {
 
 export const AccountInfoDisplay = ({ account }: AccountInfoDisplayProps) => {
   const { network } = useDriftStore();
-  // Get all available spot markets
   const spotMarkets = SpotMarkets[network];
 
   // Prepare market data with balances
@@ -65,16 +71,13 @@ export const AccountInfoDisplay = ({ account }: AccountInfoDisplayProps) => {
     const symbol = spotConfig?.symbol?.toLowerCase() || "unknown";
     const precision = spotConfig?.precisionExp || 6;
 
-    // Find position for this market if it exists
     const position = account.spotPositions.find(
       (pos) =>
         pos.marketIndex === marketIndex &&
         pos.cumulativeDeposits &&
-        pos.cumulativeDeposits !== "00" &&
-        pos.cumulativeDeposits > 0
+        pos.cumulativeDeposits !== "00"
     );
 
-    // Get balance info
     let formattedBalance = "0";
     let balanceType = "-";
     let hasBalance = false;
@@ -101,106 +104,149 @@ export const AccountInfoDisplay = ({ account }: AccountInfoDisplayProps) => {
     }
   });
 
-  // Combine arrays with markets with balances first
-  const sortedMarkets = [...marketsWithBalances, ...marketsWithoutBalances];
+  // Sort markets with balances by balance amount
+  const sortedMarketsWithBalances = [
+    ...marketsWithBalances,
+    ...marketsWithoutBalances,
+  ].sort((a, b) => {
+    return parseFloat(b.formattedBalance) - parseFloat(a.formattedBalance);
+  });
+
+  const topTokens = sortedMarketsWithBalances.slice(0, 4);
+  const remainingTokens = sortedMarketsWithBalances.slice(4);
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-6">
-        <div>
-          <h4 className="font-medium pb-2 text-lg text-white">
-            Account Information
-          </h4>
-          <hr />
-          <div className="mt-4 space-y-2">
-            <p className="text-gray-300">
-              <span className="font-medium">Sub Account ID:</span>{" "}
-              {account.subAccountId}
-            </p>
-            <p className="text-gray-300">
-              <span className="font-medium">Name:</span>{" "}
-              {account.name
-                ? new TextDecoder().decode(new Uint8Array(account.name))
-                : "Unnamed"}
-            </p>
-            <p className="text-gray-300">
-              <span className="font-medium">Authority:</span>{" "}
-              {account.authority.toString()}
-            </p>
-          </div>
-        </div>
-
-        <div>
-          <h4 className="font-medium pb-2 text-lg text-white">
-            Token Balances
-          </h4>
-          <hr />
-          <div className="mt-2">
-            <div
-              className="max-h-[600px] overflow-y-auto relative"
-              style={{
-                scrollbarWidth: "thin",
-                msOverflowStyle: "none",
-                scrollbarColor: "var(--muted) var(--background)",
-              }}
-            >
-              <table className="w-full">
-                <thead className="sticky top-0 bg-background z-10">
-                  <tr className="border-b border-muted">
-                    <th className="py-2 px-4 text-left text-gray-300">Token</th>
-                    <th className="py-2 px-4 text-left text-gray-300">Mint</th>
-                    <th className="py-2 px-4 text-left text-gray-300">
-                      Balance
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sortedMarkets.map((market) => (
-                    <tr
-                      key={`market-${market.marketIndex}`}
-                      className="border-b border-muted odd:bg-muted/25"
-                    >
-                      <td className="py-4 px-4">
-                        <div className="flex items-center space-x-2">
-                          <Image
-                            src={`${DRIFT_ICON_URL}${market.symbol}.svg`}
-                            alt={market.symbol}
-                            className="w-6 h-6"
-                            onError={(e) => {
-                              (
-                                e.target as HTMLImageElement
-                              ).src = `${DRIFT_ICON_URL}sol.svg`;
-                            }}
-                            width={20}
-                            height={20}
-                          />
-                          <span className="text-gray-300">
-                            {market.symbol.toUpperCase()}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-2 px-4">
-                        <Link
-                          href={`https://explorer.solana.com/address/${market.mint.toString()}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-400 hover:text-blue-300 flex items-center"
-                        >
-                          <span className="truncate max-w-[120px]">
-                            {market.mint.toString().substring(0, 8)}...
-                          </span>
-                          <ExternalLinkIcon className="w-4 h-4 ml-1" />
-                        </Link>
-                      </td>
-                      <td className="py-2 px-4 text-gray-300">
-                        {market.formattedBalance}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+    <div className="space-y-8">
+      <Card className="bg-muted/25 py-6 hover:bg-muted/50">
+        <CardHeader>
+          <CardTitle>Account Information</CardTitle>
+          <CardDescription>Basic account details and authority</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="space-y-1 md:col-span-1">
+              <p className="text-sm font-medium text-muted-foreground">
+                Sub Account ID
+              </p>
+              <p className="text-lg font-semibold">{account.subAccountId}</p>
+            </div>
+            <div className="space-y-1 md:col-span-1">
+              <p className="text-sm font-medium text-muted-foreground">Name</p>
+              <p className="text-lg font-semibold">
+                {account.name
+                  ? new TextDecoder().decode(new Uint8Array(account.name))
+                  : "Unnamed"}
+              </p>
+            </div>
+            <div className="space-y-1 md:col-span-2 flex justify-end">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Authority
+                </p>
+                <p className="text-lg font-semibold truncate">
+                  {account.authority.toString()}
+                </p>
+              </div>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {topTokens.length > 0 && (
+        <div className="space-y-4">
+          <h4 className="text-lg font-semibold">Tokens</h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {topTokens.map((market) => (
+              <Card
+                key={`top-token-${market.marketIndex}`}
+                className="bg-muted/25 py-6 hover:bg-muted/50"
+              >
+                <CardHeader>
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src={`${DRIFT_ICON_URL}${market.symbol}.svg`}
+                        alt={market.symbol}
+                        className="w-6 h-6"
+                        onError={(e) => {
+                          (
+                            e.target as HTMLImageElement
+                          ).src = `${DRIFT_ICON_URL}sol.svg`;
+                        }}
+                        width={24}
+                        height={24}
+                      />
+                      <CardTitle className="text-lg">
+                        <div className="flex items-center  justify-between gap-2">
+                          <div>{market.formattedBalance}</div>
+                          <div>{market.symbol.toUpperCase()}</div>
+                        </div>
+                      </CardTitle>
+                    </div>
+
+                    <Link
+                      href={`https://explorer.solana.com/address/${market.mint.toString()}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground hover:text-chart-1 flex items-center"
+                    >
+                      <span className="truncate max-w-[120px]">
+                        {market.mint.toString().substring(0, 20)}...
+                      </span>
+                      <ExternalLinkIcon className="w-4 h-4 ml-1" />
+                    </Link>
+                  </div>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="space-y-4">
+        <div className="space-y-2">
+          {remainingTokens.map((market, index) => (
+            <div
+              key={`market-${market.marketIndex}`}
+              className={`grid grid-cols-4 gap-4 px-6 py-6 rounded-sm ${
+                index % 2 === 0
+                  ? "bg-muted/25 hover:bg-muted/50"
+                  : "bg-muted/5 hover:bg-muted/25"
+              }`}
+            >
+              <div className="flex items-center space-x-2 col-span-1 justify-center">
+                <Image
+                  src={`${DRIFT_ICON_URL}${market.symbol}.svg`}
+                  alt={market.symbol}
+                  className="w-6 h-6"
+                  onError={(e) => {
+                    (
+                      e.target as HTMLImageElement
+                    ).src = `${DRIFT_ICON_URL}sol.svg`;
+                  }}
+                  width={24}
+                  height={24}
+                />
+                <span>{market.symbol.toUpperCase()}</span>
+              </div>
+              <div className="col-span-2">
+                <Link
+                  href={`https://explorer.solana.com/address/${market.mint.toString()}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-chart-1 flex items-center justify-center"
+                >
+                  <span className="truncate max-w-[120px]">
+                    {market.mint.toString().substring(0, 8)}...
+                  </span>
+                  <ExternalLinkIcon className="w-4 h-4 ml-1" />
+                </Link>
+              </div>
+              <div className="col-span-1 justify-center flex items-center">
+                {market.formattedBalance}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

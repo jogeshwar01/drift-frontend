@@ -131,7 +131,7 @@ export function UserAccountManager() {
   );
 
   return (
-    <div className="p-4 border border-muted rounded-lg bg-background shadow">
+    <div className="p-4 border border-muted/50 rounded-lg bg-background shadow">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold text-transparent bg-[image:var(--color-primary-gradient)] bg-clip-text">
           Account
@@ -149,7 +149,7 @@ export function UserAccountManager() {
           <div className="flex flex-col lg:flex-row gap-2 lg:space-x-4 lg:items-end">
             <div className="w-full lg:w-1/2">
               <label className="block mb-2 text-gray-300">
-                Select Account:
+                Select Account
               </label>
               <Select
                 value={selectedAccount?.toString() || ""}

@@ -79,6 +79,12 @@ export const WalletViewer = () => {
     }
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleViewWallet();
+    }
+  };
+
   const selectedAccountData = viewedAccounts.find(
     (account) => account.subAccountId === selectedAccount
   );
@@ -92,7 +98,7 @@ export const WalletViewer = () => {
   };
 
   return (
-    <div className="p-4 border border-muted rounded-lg bg-background shadow">
+    <div className="p-4 border border-muted/50 rounded-lg bg-background shadow">
       <div className="space-y-6">
         <div>
           <div className="flex justify-between items-center mb-6">
@@ -105,6 +111,7 @@ export const WalletViewer = () => {
               type="text"
               value={walletAddress}
               onChange={(e) => setWalletAddress(e.target.value)}
+              onKeyDown={handleKeyPress}
               placeholder="Enter Solana wallet address"
               className="border border-muted bg-background text-white p-2 rounded flex-grow focus:outline-none"
             />
@@ -136,7 +143,7 @@ export const WalletViewer = () => {
           <div className="space-y-6">
             <div>
               <label className="block mb-2 text-gray-300">
-                Select Account:
+                Select Account
               </label>
               <Select
                 value={selectedAccount?.toString()}
